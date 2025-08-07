@@ -443,8 +443,13 @@ save "${EventStudyResults}/CA30_Outcome3_SJVertSGC_Decomp_QuarterYearAndPeriodCo
 log close
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
-*?? step z. visualize the results (the stacked bar plot)
+*?? step z. visualize the results
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
+
+/* 
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+*-? s-z-1. period coefficients in a stacked bar plot
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 use "${EventStudyResults}/CA30_Outcome3_SJVertSGC_Decomp_QuarterYearAndPeriodCoefs.dta", clear 
 
@@ -469,7 +474,7 @@ foreach var in SameMVC DiffMVC DiffFuncSJVC {
     }
 }
 
-/* graph bar coef_SameMVC_gains coef_DiffMVC_gains coef_DiffFuncSJVC_gains if inrange(Year, 1, 7), ///
+graph bar coef_SameMVC_gains coef_DiffMVC_gains coef_DiffFuncSJVC_gains if inrange(Year, 1, 7), ///
     over(Year, gap(5)) stack ///
     scheme(tab2) name(bar_stacked, replace) ///
     legend(label(1 "Within team") label(2 "Across teams, within function") label(3 "Across teams, across functions")) ///
@@ -489,7 +494,7 @@ foreach var in SameMVC DiffMVC DiffFuncSJVC {
     text(0.12  77.5 "${frac_DiffFuncSJVC_6}", size(medium)  placement(n)) ///
     text(0.06  91.0 "${frac_DiffMVC_7}"     , size(medium)  placement(c)) ///
     text(0.11  91.0 "${frac_DiffFuncSJVC_7}", size(medium)  placement(n))
-graph export "${EventStudyResults}/CA30_Outcome3_5_SJVertSGC_Decomp_YearlyAggregation.pdf", replace as(pdf) */
+graph export "${EventStudyResults}/CA30_Outcome3_5_SJVertSGC_Decomp_YearlyAggregation.pdf", replace as(pdf)
 
 capture drop Period
 tostring Year, generate(Period)
@@ -511,3 +516,36 @@ graph bar coef_SameMVC_gains coef_DiffMVC_gains coef_DiffFuncSJVC_gains if inran
     text(0.060  70.0 "${frac_DiffMVC_9}%"     , size(medium)  placement(e)) ///
     text(0.095  73.0 "${frac_DiffFuncSJVC_9}%", size(medium)  placement(n))
 graph save "${EventStudyResults}/CA30_Outcome3_SJVertSGC_Decomp_PeriodCoefs.gph", replace
+*/
+
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+*-? s-z-2. overlaying the quarterly coefficients
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+
+use "${EventStudyResults}/CA30_Outcome3_SJVertSGC_Decomp_QuarterYearAndPeriodCoefs.dta", clear
+
+keep ///
+    quarter_SJVertSGC_gains coeff_SJVertSGC_gains lb_SJVertSGC_gains ub_SJVertSGC_gains ///
+    quarter_SameMVC_gains coeff_SameMVC_gains lb_SameMVC_gains ub_SameMVC_gains ///
+    quarter_DiffMVC_gains coeff_DiffMVC_gains lb_DiffMVC_gains ub_DiffMVC_gains ///
+    quarter_DiffFuncSJVC_gains coeff_DiffFuncSJVC_gains lb_DiffFuncSJVC_gains ub_DiffFuncSJVC_gains
+
+replace quarter_SJVertSGC_gains    = quarter_SJVertSGC_gains - 0.22
+replace quarter_SameMVC_gains      = quarter_SameMVC_gains  - 0.11
+replace quarter_DiffFuncSJVC_gains = quarter_DiffFuncSJVC_gains + 0.11
+
+twoway ///
+    (scatter coeff_SameMVC_gains quarter_SameMVC_gains, lcolor(ebblue) mcolor(ebblue)) ///
+    (rcap lb_SameMVC_gains ub_SameMVC_gains quarter_SameMVC_gains, lcolor(ebblue)) ///
+    (scatter coeff_DiffMVC_gains quarter_DiffMVC_gains, lcolor(magenta) mcolor(magenta)) ///
+    (rcap lb_DiffMVC_gains ub_DiffMVC_gains quarter_DiffMVC_gains, lcolor(magenta)) ///
+    (scatter coeff_DiffFuncSJVC_gains quarter_DiffFuncSJVC_gains, lcolor(dkgreen) mcolor(dkgreen)) ///
+    (rcap lb_DiffFuncSJVC_gains ub_DiffFuncSJVC_gains quarter_DiffFuncSJVC_gains, lcolor(dkgreen)) ///
+    (scatter coeff_SJVertSGC_gains quarter_SJVertSGC_gains, lcolor(teal) mcolor(teal)) ///
+    (rcap lb_SJVertSGC_gains ub_SJVertSGC_gains quarter_SJVertSGC_gains, lcolor(teal)) ///
+    , yline(0, lcolor(maroon)) xline(-1, lcolor(maroon)) ///
+    xlabel(-8(2)28, grid gstyle(dot) labsize(medsmall)) /// 
+    ylabel(-0.3(0.05)0.3, grid gstyle(dot) labsize(medsmall)) ///
+    xtitle("Quarters since manager change", size(medlarge)) ytitle("Coefficient values", size(medlarge)) ///
+    legend(label(2 "Within team") label(4 "Across teams, within function") label(6 "Across teams, across functions") label(8 "All lateral moves") order(8 2 4 6) position(6) ring(0) size(small))
+graph export "${EventStudyResults}/CA30_Outcome3_SJVertSGC_Decomp_OverlayingQuarterCoefs.pdf", replace as(pdf)
