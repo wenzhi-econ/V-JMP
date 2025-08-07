@@ -23,26 +23,12 @@ Time: 2025-04-21
 
 use "${TempData}/0106TeamLevelEventsAndOutcomes.dta", clear 
 
-generate lAvPay = log(AvPay)
+generate lAvPay      = log(AvPay)
+generate lAvPayBonus = log(AvPayBonus)
 
-global perf  lAvPay                ShareChangeSalaryGrade ShareTransferSJV    ShareTransferFunc
-global div   TeamFracFemale        TeamFracAgeBand        TeamFracOfficeCode  TeamFracCountry
-global homo  ShareSameGender       ShareSameAge           ShareSameOffice     ShareSameNationality  
-
-label variable lAvPay                 "Salary (logs)"
-label variable ShareChangeSalaryGrade "Salary grade increases"
-label variable ShareTransferSJV       "Lateral moves"
-label variable ShareTransferFunc      "Cross-functional moves"
-
-label variable TeamFracFemale         "Diversity, gender"
-label variable TeamFracAgeBand        "Diversity, age"
-label variable TeamFracOfficeCode     "Diversity, office"
-label variable TeamFracCountry        "Diversity, nationality"
-
-label variable ShareSameGender        "Same gender"
-label variable ShareSameAge           "Same age"
-label variable ShareSameOffice        "Same office"
-label variable ShareSameNationality   "Same nationality" 
+global perf  lAvPay           lAvPayBonus       ShareChangeSalaryGrade AvBPRatio
+global mob   ShareTransferSJV ShareTransferFunc ShareSameAge           ShareSameGender
+global div   TeamFracFemale   TeamFracAgeBand   TeamFracOfficeCode     TeamFracCountry
 
 label variable CA30_toH "High-flyer manager"
 
@@ -55,7 +41,7 @@ global controls FuncM ISOCodeM Year
 eststo clear 
 
 local i = 1
-foreach y in  $perf $div $homo {
+foreach y in $perf $mob $div {
 	
     reghdfe `y' CA30_toH if spanM>1 & inrange(Rel_Time, -24, -1), cluster(IDlseMHRPreMost) absorb($controls)
         eststo reg`i'
@@ -76,9 +62,9 @@ global latex_toprule      "\toprule"
 global latex_midrule      "\midrule"
 global latex_bottomrule   "\bottomrule"
 global latex_numbers      "& \multicolumn{1}{c}{(1)} & \multicolumn{1}{c}{(2)} & \multicolumn{1}{c}{(3)} & \multicolumn{1}{c}{(4)} \\"
-global latex_titles_A     "& \multicolumn{1}{c}{Salary (logs)} & \multicolumn{1}{c}{Salary grade increase}  & \multicolumn{1}{c}{Lateral move} & \multicolumn{1}{c}{Cross-functional move} \\"
-global latex_titles_B     "& \multicolumn{1}{c}{Diversity, gender} & \multicolumn{1}{c}{Diversity, age}  & \multicolumn{1}{c}{Diversity, office} & \multicolumn{1}{c}{Diversity, nationality} \\"
-global latex_titles_C     "& \multicolumn{1}{c}{Same gender} & \multicolumn{1}{c}{Same age}  & \multicolumn{1}{c}{Same office} & \multicolumn{1}{c}{Same nationality} \\"
+global latex_titles_A     "& \multicolumn{1}{c}{Pay (logs)} & \multicolumn{1}{c}{Pay + bonus (logs)} & \multicolumn{1}{c}{Salary grade increase} & \multicolumn{1}{c}{Bonus/pay ratio} \\"
+global latex_titles_B     "& \multicolumn{1}{c}{Lateral move} & \multicolumn{1}{c}{Cross-functional move} & \multicolumn{1}{c}{Same gender} & \multicolumn{1}{c}{Same age} \\"
+global latex_titles_C     "& \multicolumn{1}{c}{Diversity, gender} & \multicolumn{1}{c}{Diversity, age} & \multicolumn{1}{c}{Diversity, office} & \multicolumn{1}{c}{Diversity, nationality} \\"
 global latex_file         "${EventStudyResults}/CA30_EndogenousMobilityChecks_ToH_Pre24toPre1.tex"
 
 esttab reg1 reg2 reg3 reg4 using "${latex_file}", ///
@@ -94,7 +80,7 @@ esttab reg5 reg6 reg7 reg8 using "${latex_file}", ///
     b(4) se(3) star(* 0.10 ** 0.05 *** 0.01) ///
     keep(CA30_toH) ///
     stats(mean_toL r2 N, labels("Mean, low-flyer manager" "R-squared" "N") fmt(%9.3f %9.3f %9.0g)) ///
-    prehead("\multicolumn{5}{c}{\textit{Panel (b): team diversity}} \\ [7pt]") ///
+    prehead("\multicolumn{5}{c}{\textit{Panel (b): team mobility}} \\ [7pt]") ///
     posthead("${latex_numbers}" "${latex_titles_B}" "${latex_midrule}") ///
     prefoot("${latex_midrule}") postfoot("${latex_midrule}")
 
@@ -103,7 +89,7 @@ esttab reg9 reg10 reg11 reg12 using "${latex_file}", ///
     b(4) se(3) star(* 0.10 ** 0.05 *** 0.01) ///
     keep(CA30_toH) ///
     stats(mean_toL r2 N, labels("Mean, low-flyer manager" "R-squared" "N") fmt(%9.3f %9.3f %9.0g)) ///
-    prehead("\multicolumn{5}{c}{\textit{Panel (c): team homophily with manager}} \\ [7pt]") ///
+    prehead("\multicolumn{5}{c}{\textit{Panel (c): team diversity}} \\ [7pt]") ///
     posthead("${latex_numbers}" "${latex_titles_C}" "${latex_midrule}") ///
     prefoot("${latex_midrule}")  ///
     postfoot("${latex_midrule}" "${latex_endtabular}")
