@@ -269,14 +269,6 @@ capture drop TransferSJDiffM
 generate TransferSJDiffM = TransferSJ
 replace  TransferSJDiffM = 0 if TransferSJSameM==1 
 
-*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-*-? s-3-4. get productivity data 
-*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-
-merge 1:1 IDlse YearMonth using "${TempData}/0105SalesProdOutcomes.dta", keepusing(ProductivityStd Productivity ChannelFE)
-    drop if _merge==2
-    drop _merge
-
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 4. collapse into team-month level data
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
@@ -289,12 +281,14 @@ generate one = 1
 
 capture drop PayBonus
 generate PayBonus = Pay + Bonus
+capture drop BonusPayRatio
+generate BonusPayRatio = Bonus/Pay
 
 collapse ///
-    (mean) AvPay=PayBonus ShareChangeSalaryGrade=ChangeSalaryGrade SharePromWL=PromWL AvProductivityStd=ProductivityStd ///
+    (mean) AvPay=Pay AvPayBonus=PayBonus ShareChangeSalaryGrade=ChangeSalaryGrade AvBPRatio=BonusPayRatio ///
+    (mean) ShareTransferSJV=TransferSJV ShareTransferFunc=TransferFunc ShareSameAge=SameAge ShareSameGender=SameGender ///
     (mean) TeamFracFemale TeamFracAgeBand TeamFracOfficeCode TeamFracCountry ///
-    (mean) ShareSameGender=SameGender ShareSameAge=SameAge ShareSameOffice=SameOffice ShareSameNationality=SameNationality ///
-    (mean) ShareTransferSJ=TransferSJ ShareTransferSJV=TransferSJV ShareTransferFunc=TransferFunc ///
+    (mean) SharePromWL=PromWL ShareTransferSJ=TransferSJ ShareSameOffice=SameOffice ShareSameNationality=SameNationality ///
     (mean) IDlseMHRPreMost IDMngr_Post Event_Time Rel_Time CA30_LtoL CA30_LtoH CA30_HtoH CA30_HtoL ///
     (mean) FuncM Year ///
     (sd) SDPay=PayBonus ///
@@ -318,21 +312,22 @@ replace  CA30_toH = 0 if CA30_LtoL==1 | CA30_HtoL==1
 *?? step 5. save the dataset 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 
-label variable AvPay                  "Team-level average pay plus bonus"
+label variable AvPay                  "Team-level average pay"
+label variable AvPayBonus             "Team-level average pay plus bonus"
 label variable ShareChangeSalaryGrade "Team-level share of employees that experienced a salary grade increase"
-label variable SharePromWL            "Team-level share of employees that experienced a work level promotion"
-label variable AvProductivityStd      "Team-level average sales bonus (s.d.)"
+label variable AvBPRatio              "Team-level average bonus/pay ratio"
+label variable ShareTransferSJV       "Team-level share of employees that experienced a 'lateral move'"
+label variable ShareTransferFunc      "Team-level share of employees that experienced a function change"
+label variable ShareSameAge           "Team-level share of employees that have the same age band as the manager"
+label variable ShareSameGender        "Team-level share of employees that have the same gender as the manager"
 label variable TeamFracFemale         "Team-level gender diversity"
 label variable TeamFracAgeBand        "Team-level age band diversity"
 label variable TeamFracOfficeCode     "Team-level office diversity"
 label variable TeamFracCountry        "Team-level home country diversity"
-
-label variable ShareSameGender        "Team-level share of employees that have the same gender as the manager"
-label variable ShareSameAge           "Team-level share of employees that have the same age band as the manager"
+label variable SharePromWL            "Team-level share of employees that experienced a work level promotion"
 label variable ShareSameOffice        "Team-level share of employees that are in the same office as the manager"
 label variable ShareSameNationality   "Team-level share of employees that have the same home country as the manager"
 label variable ShareTransferSJ        "Team-level share of employees that experienced a standard job change"
-label variable ShareTransferFunc      "Team-level share of employees that experienced a function change"
 
 label variable IDlseMHRPreMost        "Pre-event manager ID (manually assigned)"
 label variable IDMngr_Post            "Post-event manager ID"
@@ -352,8 +347,8 @@ label variable ISOCodeM               "Manager's working country"
 order Year YearMonth IDteam ///
     Rel_Time Event_Time CA30_LtoL CA30_LtoH CA30_HtoH CA30_HtoL CA30_toL CA30_toH ///
     FuncM ISOCodeM ///
-    AvPay ShareChangeSalaryGrade ShareTransferSJ ShareTransferSJV ShareTransferFunc ///
+    AvPay AvPayBonus ShareChangeSalaryGrade AvBPRatio ShareTransferSJV ShareTransferFunc ShareSameAge ShareSameGender ///
     TeamFracFemale TeamFracAgeBand TeamFracOfficeCode TeamFracCountry ///
-    ShareSameGender ShareSameAge ShareSameOffice ShareSameNationality
+    SharePromWL ShareSameOffice ShareSameNationality ShareTransferSJ
 
 save "${TempData}/0106TeamLevelEventsAndOutcomes.dta", replace
