@@ -23,8 +23,8 @@ set varabbrev off
 *-? s-2-1. user-specific parent folder
 
 if  "`c(username)'" == "virginiaminni" global user "/Users/virginiaminni/Dropbox/JMP_Managers"
-if 	"`c(username)'" == "virginia_m"    global user "C:/Users/virginia_m/Dropbox/JMP_Managers"
-if	"`c(username)'" == "wang"          global user "E:/__RA/JMP_Managers"
+if  "`c(username)'" == "virginia_m"    global user "C:/Users/virginia_m/Dropbox/JMP_Managers"
+if  "`c(username)'" == "wang"          global user "E:/__RA/JMP_Managers"
 
 cd "${user}"
 
