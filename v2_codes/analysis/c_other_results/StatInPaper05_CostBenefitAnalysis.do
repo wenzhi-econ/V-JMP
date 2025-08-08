@@ -55,33 +55,33 @@ global Increase_Prod = 0.358
     //&? 12 quarter estimate on the sales bonus outcome
 
 tabulate ISOCode, sort
-summarize Productivity if ISOCode=="IND"
+summarize Productivity if ISOCode=="IND" & CA30_LtoL==1
     global SD_IND   = r(sd)
     global Mean_IND = r(mean)
     global ProdIncrease_IND = ${Increase_Prod} * ${SD_IND} / ${Mean_IND}
-summarize Productivity if ISOCode=="IDN"
+summarize Productivity if ISOCode=="IDN" & CA30_LtoL==1
     global SD_IDN   = r(sd)
     global Mean_IDN = r(mean)
     global ProdIncrease_IDN = ${Increase_Prod} * ${SD_IDN} / ${Mean_IDN}
-summarize Productivity if ISOCode=="ITA"
+summarize Productivity if ISOCode=="ITA" & CA30_LtoL==1
     global SD_ITA   = r(sd)
     global Mean_ITA = r(mean)
     global ProdIncrease_ITA = ${Increase_Prod} * ${SD_ITA} / ${Mean_ITA}
-summarize Productivity if ISOCode=="RUS"
+summarize Productivity if ISOCode=="RUS" & CA30_LtoL==1
     global SD_RUS   = r(sd)
     global Mean_RUS = r(mean)
     global ProdIncrease_RUS = ${Increase_Prod} * ${SD_RUS} / ${Mean_RUS}
-summarize Productivity if ISOCode=="MEX"
+summarize Productivity if ISOCode=="MEX" & CA30_LtoL==1
     global SD_MEX   = r(sd)
     global Mean_MEX = r(mean)
     global ProdIncrease_MEX = ${Increase_Prod} * ${SD_MEX} / ${Mean_MEX}
-summarize Productivity if ISOCode=="PHL"
+summarize Productivity if ISOCode=="PHL" & CA30_LtoL==1
     global SD_PHL   = r(sd)
     global Mean_PHL = r(mean)
     global ProdIncrease_PHL = ${Increase_Prod} * ${SD_PHL} / ${Mean_PHL}
 
 global ProdIncrease = (${ProdIncrease_IND}+${ProdIncrease_IDN}+${ProdIncrease_ITA}+${ProdIncrease_RUS}+${ProdIncrease_MEX}+${ProdIncrease_PHL})/6
-display ${ProdIncrease} // .15746907
+display ${ProdIncrease} // .16066719
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 4. other pieces of information   
@@ -107,10 +107,10 @@ global benefit = ${Median_TeamSize} * ((${Operating_Profits} * ${ProdIncrease})/
 global cost    = ${Mean_LFM_Wage} * ${Increase_Wage} * ${exchange_rate}
 
 display "Benefit increase per manager: " ${benefit} 
-    // Benefit increase per manager: 32165.094
+    // Benefit increase per manager: 32818.353
 
 display "Extra Costs per high flyer manager: " ${cost}
     // Extra Costs per high flyer manager: 10963.521
 
 display "Ratio cost/benefit: " ${cost}/${benefit}
-    // Ratio cost/benefit: .34085152
+    // Ratio cost/benefit: .33406677

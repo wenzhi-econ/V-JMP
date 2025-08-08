@@ -58,7 +58,7 @@ Information and Analytics |     20,484        0.20       99.75
                     Total | 10,083,638      100.00
 */
     //&? 16 different functions: 
-    //&? "Data & Analytics" and "Data and Analytics" is one functions
+    //&? "Data & Analytics" and "Data and Analytics" is one function
     //&? "UNKNW" should be taken as missing values
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
