@@ -10,7 +10,6 @@ Input:
     "${TempData}/0102_03HFMeasure.dta"             <== created in 0102_03 do file
     "${RawMNEData}/Univoice.dta"                   <== raw data 
     "${RawMNEData}/EducationMax.dta"               <== raw data 
-    "${RawCntyData}/6.WB IncomeGroup.dta"          <== raw data
 
 Output:
     "${TempData}/DescTab0201_EffectiveLeaderScores.dta"      <== dataset containing managers' scores on effective leader survey 
@@ -179,29 +178,6 @@ label variable Hum     "Social Sciences and Humanities"
 label variable Other   "Other Educ"
 label variable Missing "Missing Education"
 
-*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-*-? s-2-2. work characteristics  
-*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-
-*!! s-2-2-1. function information 
-
-generate func_cd = (Func==3)  if !missing(Func)
-generate func_m  = (Func==9)  if !missing(Func)
-generate func_sc = (Func==11) if !missing(Func)
-generate func_rd = (Func==10) if !missing(Func)
-generate func_fi = (Func==4)  if !missing(Func)
-generate func_o  = 1           if !missing(Func)
-replace  func_o  = 0 if (func_cd==1 | func_m==1 | func_sc==1 | func_rd==1 | func_fi==1)
-
-label variable func_cd "Sales function"
-label variable func_m  "Marketing function"
-label variable func_sc "Supply chain function"
-label variable func_rd "Research/Development function"
-label variable func_fi "Finance function"
-label variable func_o  "Other functions"
-
-*!! s-2-2-2. mid-career hire 
-
 sort IDlse YearMonth
 bysort IDlse: egen FF          = min(YearMonth)
 bysort IDlse: egen FirstWL     = mean(cond(YearMonth==FF, WL, .)) // first WL observed 
@@ -209,23 +185,6 @@ bysort IDlse: egen FirstTenure = mean(cond(YearMonth==FF, Tenure, .)) // tenure 
 generate MidCareerHire = (FirstWL>1 & FirstTenure<=1 & WL!=.)
 
 label variable MidCareerHire "Mid career hire"
-
-*!! s-2-2-3. working countries 
-
-merge m:1 ISOCode using "${RawCntyData}/6.WB IncomeGroup.dta", keep(match master)
-
-generate LowIncome      = .
-replace  LowIncome      = 1 if IncomeGroup=="Low income" | IncomeGroup=="Lower middle income"
-replace  LowIncome      = 0 if IncomeGroup=="High income" | IncomeGroup=="Upper middle income"
-generate UpperMidIncome = .
-replace  UpperMidIncome = 1 if IncomeGroup=="Upper middle income" 
-replace  UpperMidIncome = 0 if IncomeGroup=="High income" | IncomeGroup=="Low income" | IncomeGroup=="Lower middle income"
-generate HighIncome     = . 
-replace  HighIncome     = 1 if IncomeGroup=="High income"
-replace  HighIncome     = 0 if IncomeGroup=="Upper middle income" | IncomeGroup=="Low income" | IncomeGroup=="Lower middle income"
-
-label variable LowIncome      "Low income countries"
-label variable UpperMidIncome "Middle income countries"
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-2-3. performance metrics (post-promotion)  
@@ -261,16 +220,12 @@ label variable LineManager "Effective leader (survey)"
 
 keep ///
     IDlse CA30 YearMonth Post_Promotion ///
-    Female MBA Econ Sci Hum Other ///
-    func_cd func_m func_sc func_o func_rd func_fi ///
-    MidCareerHire LowIncome UpperMidIncome ///
+    Female MBA Econ Sci Hum Other MidCareerHire ///
     PayGrowth WLAgg3 VPA LineManager
 
 order ///
     IDlse CA30 YearMonth Post_Promotion ///
-    Female MBA Econ Sci Hum Other ///
-    func_cd func_m func_sc func_o func_rd func_fi ///
-    MidCareerHire LowIncome UpperMidIncome ///
+    Female MBA Econ Sci Hum Other MidCareerHire ///
     PayGrowth WLAgg3 VPA LineManager
 
 save "${TempData}/DescTab0201_SummaryStatistics_MngrHvsL.dta", replace 
@@ -293,7 +248,7 @@ bysort IDlse: generate occurrence = _n
     //&? impt: these variables are time-invariant. 
     //&? thus, for each person, we need only one observation (restricted by condition if occurrence==1)
 
-balancetable CA30 Female MBA Econ Sci Hum Other if occurrence==1 ///
+balancetable CA30 Female MBA Econ Sci Hum Other MidCareerHire if occurrence==1 ///
     using "${latex_file}", ///
     pval varla vce(cluster IDlse) ctitles("Low-flyers" "High-flyers" "Difference")   ///
     noli noobs replace nonumbers ///
@@ -303,45 +258,28 @@ balancetable CA30 Female MBA Econ Sci Hum Other if occurrence==1 ///
     postfoot("")
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-*-? s-3-2: work-related variables  
-*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-    
-balancetable CA30 func_cd MidCareerHire LowIncome UpperMidIncome if occurrence==1 ///
-    using "${latex_file}", ///
-    pval varla vce(cluster IDlse)  ///
-    noli noobs nonum append ///
-    prehead("") ///
-    posthead("\multicolumn{4}{l}{\textit{Panel (b): work-related variables}} \\ [+7pt]") ///
-    prefoot("\midrule") ///
-    postfoot("")
-
-*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-*-? s-3-3: performance-related variables  
+*-? s-3-2: performance-related variables  
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 //impt: We only consider the performance after managers reach WL2.
 
-preserve 
+*!! s-3-2-1: keep only performance after managers reach WL2 or above
+keep if Post_Promotion == 1 
+    //&? sample restriction only to performance-related variables 
 
-    *!! s-3-1-1: keep only performance after managers reach WL2 or above
-    keep if Post_Promotion == 1 
-        //&? sample restriction only to performance-related variables 
+*!! s-3-2-2: average over all post periods 
+collapse (mean) CA30 PayGrowth VPA LineManager (max) WLAgg3, by(IDlse)
 
-    *!! s-3-1-2: average over all post periods 
-    collapse (mean) CA30 PayGrowth VPA LineManager (max) WLAgg3, by(IDlse)
+label variable PayGrowth           "Monthly salary growth"
+label variable WLAgg3              "Promotion work-level 3" 
+label variable VPA                 "Perf. rating (1-150)"
+label variable LineManager         "Effective leader (survey)"
 
-    label variable PayGrowth           "Monthly salary growth"
-    label variable WLAgg3              "Promotion work-level 3" 
-    label variable VPA                 "Perf. rating (1-150)"
-    label variable LineManager         "Effective leader (survey)"
-
-    balancetable CA30 PayGrowth WLAgg3 VPA LineManager ///
-        using "${latex_file}", ///
-        pval varla vce(cluster IDlse) ///
-        noli nonum append ///
-        prehead("") ///
-        posthead("\multicolumn{4}{l}{\textit{Panel (c): performance after high-flyer status is determined}} \\ [+7pt]") ///
-        prefoot("\midrule") ///
-        postfoot("\bottomrule \bottomrule" "\end{tabular}")
-
-restore 
+balancetable CA30 PayGrowth WLAgg3 VPA LineManager ///
+    using "${latex_file}", ///
+    pval varla vce(cluster IDlse) ///
+    noli nonum append ///
+    prehead("") ///
+    posthead("\multicolumn{4}{l}{\textit{Panel (b): performance after high-flyer status is determined}} \\ [+7pt]") ///
+    prefoot("\midrule") ///
+    postfoot("\bottomrule \bottomrule" "\end{tabular}")
