@@ -111,24 +111,26 @@ replace  Same_MHR = 1 if IDlseMHR == IDlseMHRTrue
 order IDlse YearMonth IDlseMHR IDlseMHRTrue ///
     CA30_* Same_SubFunc Same_OfficeCode Same_WorkInfo Same_MHRMHR Same_MHRSub Same_MHRColleague Same_MHR
 
-save "${TempData}/temp_Network.dta", replace
+save "${TempData}/MechTab0203_Network.dta", replace
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 2. run regressions  
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 
-use "${TempData}/temp_Network.dta", clear 
+use "${TempData}/MechTab0203_Network.dta", clear 
+
+keep if CA30_LtoL==1 | CA30_LtoH==1
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-2-1. 3 years after the event 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 foreach var in Same_WorkInfo Same_MHRMHR Same_MHRSub Same_MHRColleague Same_MHR {
-    reghdfe `var' CA30_LtoH CA30_HtoH CA30_HtoL if Rel_Time==36, absorb(Event_Time Country) cluster(IDlseMHR)
+    reghdfe `var' CA30_LtoH if Rel_Time==36, absorb(Event_Time Country) cluster(IDlseMHR)
         local r_squared = e(r2)    
         summarize `var' if e(sample)==1 & CA30_LtoL==1
             local mean_LtoL = r(mean)
-        xlincom (CA30_LtoH) (CA30_HtoL-CA30_HtoH), post
+        xlincom (CA30_LtoH), post
             eststo `var'_3yrs
             estadd scalar mean_LtoL = `mean_LtoL'
             estadd scalar r_squared = `r_squared'
@@ -139,11 +141,11 @@ foreach var in Same_WorkInfo Same_MHRMHR Same_MHRSub Same_MHRColleague Same_MHR 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 foreach var in Same_WorkInfo Same_MHRMHR Same_MHRSub Same_MHRColleague Same_MHR {
-    reghdfe `var' CA30_LtoH CA30_HtoH CA30_HtoL if Rel_Time==84, absorb(Event_Time Country) cluster(IDlseMHR)
+    reghdfe `var' CA30_LtoH if Rel_Time==84, absorb(Event_Time Country) cluster(IDlseMHR)
         local r_squared = e(r2)    
         summarize `var' if e(sample)==1 & CA30_LtoL==1
             local mean_LtoL = r(mean)
-        xlincom (CA30_LtoH) (CA30_HtoL-CA30_HtoH), post
+        xlincom (CA30_LtoH), post
             eststo `var'_7yrs
             estadd scalar mean_LtoL = `mean_LtoL'
             estadd scalar r_squared = `r_squared'
@@ -163,12 +165,12 @@ global latex_numbers      "& \multicolumn{1}{c}{(1)} & \multicolumn{1}{c}{(2)} &
 global latex_titles       "& \multicolumn{1}{c}{Same subfunction or office} & \multicolumn{1}{c}{Manager's managers} & \multicolumn{1}{c}{Manager's subordinates} & \multicolumn{1}{c}{Manager's same-level colleagues} & \multicolumn{1}{c}{Same manager} \\"
 global latex_panel_A      "\addlinespace[5pt] \multicolumn{5}{l}{\emph{Panel (a): 3 years after the event}} \\ [7pt]"
 global latex_panel_B      "\addlinespace[5pt] \multicolumn{5}{l}{\emph{Panel (b): 7 years after the event}} \\ [7pt]"
-global latex_file         "${OtherResults}/CA30_Network_toHvstoL.tex"
+global latex_file         "${OtherResults}/CA30_Network_LtoHvsLtoL.tex"
 
 esttab Same_WorkInfo_3yrs Same_MHRMHR_3yrs Same_MHRSub_3yrs Same_MHRColleague_3yrs Same_MHR_3yrs using "${latex_file}", ///
     replace style(tex) fragment nocons label nofloat nobaselevels nonumbers noobs nomtitles collabels(,none) ///
     b(4) se(3) star(* 0.10 ** 0.05 *** 0.01) ///
-    keep(lc_1 lc_2) order(lc_1 lc_2) varlabels(lc_1 "LtoH - LtoL" lc_2 "HtoL - HtoH") ///
+    keep(lc_1) order(lc_1) varlabels(lc_1 "LtoH") ///
     stats(mean_LtoL r_squared N, labels("Mean, LtoL group" "R-squared" "N") fmt(%9.3f %9.3f %9.0g)) ///
     prehead("${latex_star}" "${latex_begintabular}" "${latex_toprule}" "${latex_toprule}") posthead("${latex_titles}" "${latex_numbers}" "${latex_midrule}" "${latex_panel_A}") ///
     prefoot("${latex_midrule}") postfoot("${latex_midrule}")
@@ -176,7 +178,7 @@ esttab Same_WorkInfo_3yrs Same_MHRMHR_3yrs Same_MHRSub_3yrs Same_MHRColleague_3y
 esttab Same_WorkInfo_7yrs Same_MHRMHR_7yrs Same_MHRSub_7yrs Same_MHRColleague_7yrs Same_MHR_7yrs using "${latex_file}", ///
     append style(tex) fragment nocons label nofloat nobaselevels nonumbers noobs nomtitles collabels(,none) ///
     b(4) se(3) star(* 0.10 ** 0.05 *** 0.01) ///
-    keep(lc_1 lc_2) order(lc_1 lc_2) varlabels(lc_1 "LtoH - LtoL" lc_2 "HtoL - HtoH") ///
+    keep(lc_1) order(lc_1) varlabels(lc_1 "LtoH") ///
     stats(mean_LtoL r_squared N, labels("Mean, LtoL group" "R-squared" "N") fmt(%9.3f %9.3f %9.0g)) ///
     prehead("${latex_panel_B}") posthead("") ///
     prefoot("${latex_midrule}") ///

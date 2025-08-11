@@ -33,7 +33,7 @@ bysort SubFuncS Office StandardJob: generate OldJob = (StandardJob[_n]!=Standard
 replace OldJob = . if YearMonth==tm(2020m3)
 replace NewJob = . if YearMonth==tm(2011m1)
 
-save "${TempData}/NewOldJobs.dta", replace 
+save "${TempData}/MechTab0301_NewOldJobs.dta", replace 
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 2. share of WL2 jobs
@@ -56,7 +56,7 @@ label variable one "Number of jobs within office-subfunc-month"
 rename one UnitSize
 
 compress 
-save "${TempData}/ManagerJobs.dta", replace 
+save "${TempData}/MechTab0301_ManagerJobs.dta", replace 
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 3. 
@@ -70,10 +70,10 @@ keep if CA30_LtoL==1 | CA30_LtoH==1
 decode Func, gen(FuncS)
 decode SubFunc, gen(SubFuncS)
 
-merge m:1 Office SubFuncS StandardJob YearMonth using "${TempData}/NewOldJobs.dta", keepusing(NewJob OldJob)
+merge m:1 Office SubFuncS StandardJob YearMonth using "${TempData}/MechTab0301_NewOldJobs.dta", keepusing(NewJob OldJob)
     drop _merge 
 
-merge m:1  Office SubFuncS YearMonth using "${TempData}/ManagerJobs.dta", keepusing(JobWL2 UnitSize)
+merge m:1  Office SubFuncS YearMonth using "${TempData}/MechTab0301_ManagerJobs.dta", keepusing(JobWL2 UnitSize)
     keep if _merge==3
     drop _merge 
 
