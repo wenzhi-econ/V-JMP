@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-Files in this replication package cleans all data sources used in the analysis (Stata and Python) and reproduces all results in the paper and the Supplementary Materials. A single master script (`v2_codes/v2_master.do`) can be used to control the replication process. Some analyses (mainly some event studies) involve computationally intensive tasks, which are very time-consuming. These codes are executed from the Chicago Booth high-performance computing cluster, Mercury. A replicator should expect to obtain all results in at least 24 hours if he/she wants to produce them from the single master do file.
+Files in this replication package clean all data sources used in the analysis (Stata and Python) and reproduce all results in the paper and the Supplementary Materials. Some analyses (mainly some event studies) involve computationally intensive tasks, which can be time-consuming. These codes are executed from the Chicago Booth high-performance computing cluster, Mercury. All results should be expected to be produced within 24 hours by running the single master do file: `v2_codes/v2_master.do`.
 
 ## 2. Data description and access
 
@@ -24,15 +24,15 @@ Files in this replication package cleans all data sources used in the analysis (
 ### 3.1. Software requirements
 - Stata 17.0. 
   - All necessary user-written packages are already included in the `stata_libraries` folder.
-  - For readers who wish to install them by themselves, the `v2_codes/util/00InstallPackages.do` file contains all necessary codes. However, if these user-written packages get updated, some differences in the results may occur; thus, we highly recommend readers of interest using the provided packages in the `stata_libraries` folder.
+  - The file `v2_codes/util/00InstallPackages.do` contains all necessary codes to install packages from scratch. However, if these user-written packages get updated, some differences in the results may occur; thus, using the provided packages in the `stata_libraries` folder is recommended.
 - Python 3.12. 
   - An `environment.yml` file is provided to create a virtual environment in the `python_env` folder.
 
 ### 3.2. Equipment requirements
-- Some computationally intensive files (related to event studies) are executed on the Chicago Booth computing cluster Mercury.
+- Some computationally intensive files (related to the event studies) are executed on the Chicago Booth computing cluster Mercury.
 - Other less computationally intensive files are executed on a Windows laptop (Intel Core(TM) i9-14900HX, RAM 64 GB)
 
-## 4. Instructions to replicators
+## 4. Instructions 
 
 ### 4.1. Setting up a virtual environment for Python
 - Make sure a virtual environment is created using the `environment.yml` file in the `./python_env` folder. Specifically, the following commands will be useful.
@@ -51,7 +51,7 @@ conda list scikit-learn
 conda list wordcloud
 pip show pyfixest
 ```
-- Edit the `user` global in the `v2_codes/v2_master.do` file to the base directory of the replicator.
+- Edit the `user` global in the `v2_codes/v2_master.do` file to the base directory of the local computer used.
 - Run the `v2_codes/v2_master.do` file to run all data cleaning and analysis codes.
 
 ## 5. The mapping from outputs to programs 
