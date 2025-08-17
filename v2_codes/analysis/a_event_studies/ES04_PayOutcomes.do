@@ -80,7 +80,7 @@ foreach var in LogPayBonus LogPay LogBonus {
         , legend(off) ///
         xline(-1, lcolor(maroon)) yline(0, lcolor(maroon)) ///
         xlabel(-8(2)28, grid gstyle(dot) labsize(medsmall)) /// 
-        xtitle("Quarters since manager change," size(medlarge)) ///
+        xtitle("Quarters since manager change", size(medlarge)) ///
         ylabel(${setup_ylabel}, grid gstyle(dot) labsize(medsmall)) ///
         note("Pre-trends joint p-value = ${PTGain_`var'}")
     graph save "${EventStudyResults}/CA30_Outcome${number}_`var'_Coef1_Gains.gph", replace

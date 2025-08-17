@@ -1,0 +1,29 @@
+/* 
+This do file computes the number of distinct job titles within subfunctions.
+
+RA: WWZ 
+Time: 2025-07-07
+*/
+
+*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
+*?? step 1. number of distinct jobs within subfunctions
+*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
+
+use "${TempData}/FinalFullSample.dta", clear 
+
+keep IDlseMHR YearMonth IDlse StandardJob
+
+sort IDlseMHR YearMonth IDlse
+bysort IDlseMHR YearMonth: egen Size_StandardJob = nvals(StandardJob)
+
+egen tag_Mngr_YM = tag(IDlseMHR YearMonth)
+
+summarize Size_StandardJob if tag_Mngr_YM==1, detail
+global Median = r(p50)
+
+histogram Size_StandardJob if tag_Mngr_YM==1 ///
+    , width(1) color(gray%50) xline(${Median}, lcolor(maroon)) ///
+    text(0.4 2 "Median = 2", placement(e)) ///
+    xlabel(0(5)60, grid gstyle(dot) labsize(small)) xtitle("Number of distinct job titles within teams") ///
+    ylabel(, grid gstyle(dot))
+graph export "${Round1Results}/NumberOfJobsWithinTeams.pdf", replace as(pdf)

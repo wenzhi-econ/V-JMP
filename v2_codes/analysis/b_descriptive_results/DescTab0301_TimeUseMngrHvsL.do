@@ -29,7 +29,7 @@ balancetable HF2 $var_list if WL==2 ///
     replace /// 
     pvalues varlabels vce(robust)  ///
     nolines nonumbers ///
-    ctitles("Not High Flyer" "High Flyer" "Difference") ///
+    ctitles("Low-flyers" "High-flyers" "Difference") ///
     prehead("\begin{tabular}{lccc} \toprule \toprule ") ///
     posthead("\midrule") ///
     prefoot("\midrule") ///

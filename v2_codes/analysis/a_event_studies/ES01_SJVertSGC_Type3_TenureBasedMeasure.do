@@ -141,8 +141,8 @@ replace quarter_SJVertSGC_TB05 = quarter_SJVertSGC_TB05 + 0.2
 twoway ///
     (scatter coeff_SJVertSGC_CA30 quarter_SJVertSGC_CA30, lcolor(ebblue) mcolor(ebblue)) ///
     (rcap lb_SJVertSGC_CA30 ub_SJVertSGC_CA30 quarter_SJVertSGC_CA30, lcolor(ebblue)) ///
-    (scatter coeff_SJVertSGC_TB05 quarter_SJVertSGC_TB05, lcolor(magenta) mcolor(magenta)) ///
-    (rcap lb_SJVertSGC_TB05 ub_SJVertSGC_TB05 quarter_SJVertSGC_TB05, lcolor(magenta)) ///
+    (scatter coeff_SJVertSGC_TB05 quarter_SJVertSGC_TB05, lcolor("237 68 74") mcolor("237 68 74")) ///
+    (rcap lb_SJVertSGC_TB05 ub_SJVertSGC_TB05 quarter_SJVertSGC_TB05, lcolor("237 68 74")) ///
     , yline(0, lcolor(maroon)) xline(-1, lcolor(maroon)) ///
     xlabel(-8(2)28, grid gstyle(dot) labsize(medsmall)) /// 
     ylabel(-0.3(0.05)0.3, grid gstyle(dot) labsize(medsmall)) ///

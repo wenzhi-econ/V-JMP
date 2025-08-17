@@ -33,7 +33,7 @@ bysort SubFuncS Office StandardJob: generate OldJob = (StandardJob[_n]!=Standard
 replace OldJob = . if YearMonth==tm(2020m3)
 replace NewJob = . if YearMonth==tm(2011m1)
 
-save "${TempData}/NewOldJobs.dta", replace 
+save "${TempData}/MechTab0301_NewOldJobs.dta", replace 
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 2. share of WL2 jobs
@@ -56,7 +56,7 @@ label variable one "Number of jobs within office-subfunc-month"
 rename one UnitSize
 
 compress 
-save "${TempData}/ManagerJobs.dta", replace 
+save "${TempData}/MechTab0301_ManagerJobs.dta", replace 
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 3. 
@@ -64,16 +64,16 @@ save "${TempData}/ManagerJobs.dta", replace
 
 use "${TempData}/FinalAnalysisSample.dta", clear
 
-keep if CA30_HtoL==1 | CA30_HtoH==1
-    //&? keep a panel of HtoL and HtoH workers
+keep if CA30_LtoL==1 | CA30_LtoH==1
+    //&? keep a panel of LtoL and LtoH workers
 
 decode Func, gen(FuncS)
 decode SubFunc, gen(SubFuncS)
 
-merge m:1 Office SubFuncS StandardJob YearMonth using "${TempData}/NewOldJobs.dta", keepusing(NewJob OldJob)
+merge m:1 Office SubFuncS StandardJob YearMonth using "${TempData}/MechTab0301_NewOldJobs.dta", keepusing(NewJob OldJob)
     drop _merge 
 
-merge m:1  Office SubFuncS YearMonth using "${TempData}/ManagerJobs.dta", keepusing(JobWL2 UnitSize)
+merge m:1  Office SubFuncS YearMonth using "${TempData}/MechTab0301_ManagerJobs.dta", keepusing(JobWL2 UnitSize)
     keep if _merge==3
     drop _merge 
 
@@ -82,21 +82,21 @@ generate sampleN = (JobWL2!=.) & (OldJob!=.) & (NewJob!=.)
 eststo clear 
 
 foreach var in JobWL2 OldJob NewJob {
-    eststo `var': reghdfe `var' CA30_HtoL if sampleN==1 & Rel_Time>0, cluster(IDlseMHR) absorb(Func#Office Female#AgeBand YearMonth)
-        summarize `var' if (e(sample)==1 & CA30_HtoL==0)
+    eststo `var': reghdfe `var' CA30_LtoH if sampleN==1 & Rel_Time>0, cluster(IDlseMHR) absorb(Func#Office Female#AgeBand YearMonth)
+        summarize `var' if (e(sample)==1 & CA30_LtoH==0)
         estadd scalar Mean = r(mean)
 } 
 
-label variable CA30_HtoL "LtoH"
+label variable CA30_LtoH "LtoH"
 
-esttab NewJob OldJob JobWL2 using "${OtherResults}/CA30_NewJobA_HtoLvsHtoH.tex" ///
+esttab NewJob OldJob JobWL2 using "${OtherResults}/CA30_NewJobA.tex" ///
     , replace style(tex) fragment nocons label nofloat nobaselevels noobs ///
     nomtitles collabels(,none) ///
     star(* 0.10 ** 0.05 *** 0.01) ///
-    keep(CA30_HtoL) ///
-    order(CA30_HtoL) ///
+    keep(CA30_LtoH) ///
+    order(CA30_LtoH) ///
     b(4) se(3) ///
-    stats(Mean r2 N, labels("Mean, HtoH group" "R-squared" "N") fmt(%9.3f %9.3f %9.0g)) ///
+    stats(Mean r2 N, labels("Mean, LtoL group" "R-squared" "N") fmt(%9.3f %9.3f %9.0g)) ///
     prehead("\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}" "\begin{tabular}{lccc}" "\toprule" "\toprule" "& \multicolumn{1}{c}{Probability of job created} & \multicolumn{1}{c}{Probability of job destroyed} & \multicolumn{1}{c}{Share of managerial jobs} \\ ") ///
     posthead("\midrule") ///
     prefoot("\midrule") ///

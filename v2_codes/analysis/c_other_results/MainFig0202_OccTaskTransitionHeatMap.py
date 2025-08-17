@@ -45,9 +45,7 @@ def results(*args):
 
 import numpy as np
 import pandas as pd
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 np.set_printoptions(threshold=sys.maxsize, linewidth=150)
 pd.set_option("mode.copy_on_write", True)
@@ -169,7 +167,7 @@ def plot_heatmap(data, year, group, diff=False, fig_name=None):
     ax.set_yticks(np.arange(data.shape[0]), labels=func_list)
     if fig_name is not None:
         plt.savefig(fig_name)
-    plt.show()
+    plt.show(block=False)
 
 
 plot_heatmap(diff_2yr, "2 years", "LtoH - LtoL", True, results("Tran_OccTask_2yr_LtoHvsLtoL.png"))

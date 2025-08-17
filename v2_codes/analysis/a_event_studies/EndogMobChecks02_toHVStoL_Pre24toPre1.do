@@ -27,7 +27,7 @@ generate lAvPay      = log(AvPay)
 generate lAvPayBonus = log(AvPayBonus)
 
 global perf  lAvPay           lAvPayBonus       ShareChangeSalaryGrade AvBPRatio
-global mob   ShareTransferSJV ShareTransferFunc ShareSameAge           ShareSameGender
+global mob   ShareTransferSJV ShareTransferFunc ShareSameAge           ShareSameOffice
 global div   TeamFracFemale   TeamFracAgeBand   TeamFracOfficeCode     TeamFracCountry
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
@@ -35,6 +35,8 @@ global div   TeamFracFemale   TeamFracAgeBand   TeamFracOfficeCode     TeamFracC
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 
 global controls FuncM ISOCodeM Year
+
+eststo clear 
 
 local i = 1
 foreach y in $perf $mob $div {
@@ -74,8 +76,8 @@ esttab reg5 reg6 reg7 reg8 using "${latex_file}", ///
     star(* 0.10 ** 0.05 *** 0.01) b(4) se(3) ///
     keep(lc_1 lc_2) order(lc_1 lc_2) varlabels(lc_1 "LtoH - LtoL" lc_2 "HtoL - HtoH") ///
     stats(mean_LtoL r_squared N, labels("\hline Mean, LtoL group" "R-squared" "N") fmt(%9.3f %9.3f %9.0g)) ///
-    prehead("\multicolumn{5}{c}{\textit{Panel (b): team diversity}} \\ [7pt]") ///
-    posthead("& \multicolumn{1}{c}{Lateral move} & \multicolumn{1}{c}{Cross-functional move} & \multicolumn{1}{c}{Same gender} & \multicolumn{1}{c}{Same age} \\" "\midrule") ///
+    prehead("\multicolumn{5}{c}{\textit{Panel (b): team mobility}} \\ [7pt]") ///
+    posthead("& \multicolumn{1}{c}{Lateral move} & \multicolumn{1}{c}{Cross-functional move} & \multicolumn{1}{c}{Same age} & \multicolumn{1}{c}{Same office} \\" "\midrule") ///
     prefoot("")  ///
     postfoot("\midrule")
 
@@ -85,7 +87,7 @@ esttab reg9 reg10 reg11 reg12 using "${latex_file}", ///
     star(* 0.10 ** 0.05 *** 0.01) b(4) se(3) ///
     keep(lc_1 lc_2) order(lc_1 lc_2) varlabels(lc_1 "LtoH - LtoL" lc_2 "HtoL - HtoH") ///
     stats(mean_LtoL r_squared N, labels("\hline Mean, LtoL group" "R-squared" "N") fmt(%9.3f %9.3f %9.0g)) ///
-    prehead("\multicolumn{5}{c}{\textit{Panel (c): team homophily with manager}} \\ [7pt]") ///
+    prehead("\multicolumn{5}{c}{\textit{Panel (c): team diversity}} \\ [7pt]") ///
     posthead("& \multicolumn{1}{c}{Diversity, gender} & \multicolumn{1}{c}{Diversity, age} & \multicolumn{1}{c}{Diversity, office} & \multicolumn{1}{c}{Diversity, nationality} \\" "\midrule") ///
     prefoot("") ///
     postfoot("\midrule" "\end{tabular}")

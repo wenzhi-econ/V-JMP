@@ -98,13 +98,13 @@ label variable SizeGrowth    "Employment growth rate (monthly) in each (Country,
 label variable WL1SizeGrowth "Work level 1 employment growth rate (monthly) in each (Country, FuncSimpl) cell"
 label variable WL2SizeGrowth "Work level 2 employment growth rate (monthly) in each (Country, FuncSimpl) cell"
 
-save "${TempData}/temp_CountryFuncMonthLevel_HFShare", replace
+save "${TempData}/Corr0102_CountryFuncMonthLevel_HFShare.dta", replace
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 2. regressing lagged outcomes to current HF shares
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 
-use "${TempData}/temp_CountryFuncMonthLevel_HFShare", clear 
+use "${TempData}/Corr0102_CountryFuncMonthLevel_HFShare.dta", clear 
 
 xtset CellID YearMonth, monthly 
 foreach var in SizeGrowth BonusPayRatio WL1SizeGrowth WL2SizeGrowth {
@@ -161,7 +161,7 @@ global latex_toprule      "\toprule"
 global latex_midrule      "\midrule"
 global latex_bottomrule   "\bottomrule"
 global latex_numbers      "& \multicolumn{1}{c}{(1)} & \multicolumn{1}{c}{(2)} & \multicolumn{1}{c}{(3)} & \multicolumn{1}{c}{(4)} & \multicolumn{1}{c}{(5)} & \multicolumn{1}{c}{(6)} \\"
-global latex_outcomes     "& \multicolumn{3}{c}{Monthly employment growth (WL1)} & \multicolumn{3}{c}{Bonus/Pay ratio} \\"
+global latex_outcomes     "& \multicolumn{3}{c}{Monthly employment growth (WL1)} & \multicolumn{3}{c}{Bonus/pay ratio} \\"
 global latex_lines        "\cmidrule(lr){2-4} \cmidrule(lr){5-7} "
 global latex_titles       "& \multicolumn{1}{c}{\shortstack{Current \\ month}} & \multicolumn{1}{c}{\shortstack{Lagged \\ -12 months}}  & \multicolumn{1}{c}{\shortstack{Lagged \\ -24 months}} & \multicolumn{1}{c}{\shortstack{Current \\ month}} & \multicolumn{1}{c}{\shortstack{Lagged \\ -12 months}}  & \multicolumn{1}{c}{\shortstack{Lagged \\ -24 months}} \\"
 global latex_file         "${OtherResults}/CA30_LaggedOutcomesAtContryFuncMonthLevelOnHFShares.tex"
