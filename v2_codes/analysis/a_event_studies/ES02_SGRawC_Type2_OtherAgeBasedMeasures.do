@@ -162,8 +162,8 @@ replace quarter_SGRawC_DA30 = quarter_SGRawC_DA30 + 0.2
 twoway ///
     (scatter coeff_SGRawC_CA30 quarter_SGRawC_CA30, lcolor(ebblue) mcolor(ebblue)) ///
     (rcap lb_SGRawC_CA30 ub_SGRawC_CA30 quarter_SGRawC_CA30, lcolor(ebblue)) ///
-    (scatter coeff_SGRawC_CA28 quarter_SGRawC_CA28, lcolor(magenta) mcolor(magenta)) ///
-    (rcap lb_SGRawC_CA28 ub_SGRawC_CA28 quarter_SGRawC_CA28, lcolor(magenta)) ///
+    (scatter coeff_SGRawC_CA28 quarter_SGRawC_CA28, lcolor("237 68 74") mcolor("237 68 74")) ///
+    (rcap lb_SGRawC_CA28 ub_SGRawC_CA28 quarter_SGRawC_CA28, lcolor("237 68 74")) ///
     , yline(0, lcolor(maroon)) xline(-1, lcolor(maroon)) ///
     xlabel(-8(2)28, grid gstyle(dot) labsize(medsmall)) /// 
     ylabel(-0.3(0.05)0.3, grid gstyle(dot) labsize(medsmall)) ///
@@ -174,8 +174,8 @@ graph save "${EventStudyResults}/CA30CA28_Outcome2_SGRawC_Coef1_Gains.gph", repl
 twoway ///
     (scatter coeff_SGRawC_CA30 quarter_SGRawC_CA30, lcolor(ebblue) mcolor(ebblue)) ///
     (rcap lb_SGRawC_CA30 ub_SGRawC_CA30 quarter_SGRawC_CA30, lcolor(ebblue)) ///
-    (scatter coeff_SGRawC_CA32 quarter_SGRawC_CA32, lcolor(magenta) mcolor(magenta)) ///
-    (rcap lb_SGRawC_CA32 ub_SGRawC_CA32 quarter_SGRawC_CA32, lcolor(magenta)) ///
+    (scatter coeff_SGRawC_CA32 quarter_SGRawC_CA32, lcolor("237 68 74") mcolor("237 68 74")) ///
+    (rcap lb_SGRawC_CA32 ub_SGRawC_CA32 quarter_SGRawC_CA32, lcolor("237 68 74")) ///
     , yline(0, lcolor(maroon)) xline(-1, lcolor(maroon)) ///
     xlabel(-8(2)28, grid gstyle(dot) labsize(medsmall)) /// 
     ylabel(-0.3(0.05)0.3, grid gstyle(dot) labsize(medsmall)) ///
@@ -186,8 +186,8 @@ graph save "${EventStudyResults}/CA30CA32_Outcome2_SGRawC_Coef1_Gains.gph", repl
 twoway ///
     (scatter coeff_SGRawC_CA30 quarter_SGRawC_CA30, lcolor(ebblue) mcolor(ebblue)) ///
     (rcap lb_SGRawC_CA30 ub_SGRawC_CA30 quarter_SGRawC_CA30, lcolor(ebblue)) ///
-    (scatter coeff_SGRawC_DA30 quarter_SGRawC_DA30, lcolor(magenta) mcolor(magenta)) ///
-    (rcap lb_SGRawC_DA30 ub_SGRawC_DA30 quarter_SGRawC_DA30, lcolor(magenta)) ///
+    (scatter coeff_SGRawC_DA30 quarter_SGRawC_DA30, lcolor("237 68 74") mcolor("237 68 74")) ///
+    (rcap lb_SGRawC_DA30 ub_SGRawC_DA30 quarter_SGRawC_DA30, lcolor("237 68 74")) ///
     , yline(0, lcolor(maroon)) xline(-1, lcolor(maroon)) ///
     xlabel(-8(2)28, grid gstyle(dot) labsize(medsmall)) /// 
     ylabel(-0.3(0.05)0.3, grid gstyle(dot) labsize(medsmall)) ///

@@ -21,7 +21,7 @@ Description of the Output Dataset:
         (2) team-level outcome and control variables in two endogenous mobility checks tables.
 
 RA: WWZ 
-Time: 2025-04-21
+Time: 2025-08-07
 */
 
 use "${TempData}/FinalAnalysisSample.dta", clear 
@@ -228,7 +228,6 @@ merge m:1 IDlseMHR YearMonth using "${TempData}/0104Mngr_Characteristics.dta" //
 capture drop SameGender
 generate SameGender = 0
 replace  SameGender = 1 if Female==FemaleM
-/* replace  SameGender = . if (Female==. | FemaleM==.) */
 label variable SameGender "=1 if employee has same gender as manager"
 
 capture drop SameAge
@@ -250,7 +249,6 @@ capture drop OutGroup
 capture drop SameNationality
 generate OutGroup = 0
 replace  OutGroup = 1 if HomeCountryISOCode!=HomeCountryISOCodeM
-/* replace  OutGroup = . if ( HomeCountryISOCode=="" | HomeCountryISOCodeM=="") */
 generate SameNationality = 1 - OutGroup 
 label variable OutGroup "=1 if employee has different HomeCountry of manager"
 label variable SameNationality "=1 if employee has same HomeCountry of manager"
@@ -293,7 +291,7 @@ collapse ///
     (mean) FuncM Year ///
     (sd) SDPay=PayBonus ///
     (firstnm) ISOCodeM ///
-    (sum)  spanM=one ///
+    (sum) spanM=one ///
     , by(IDteam YearMonth)
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?

@@ -65,7 +65,7 @@ summarize Rel_Time, detail
 *?? step 2. construct variables and macros used in reghdfe command
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 
-GenerateEventDummies, event_prefix(CA30) max_pre_period(6) lto_max_post(42) hto_max_post(42)
+GenerateEventDummies, event_prefix(CA30) max_pre_period(6) lto_max_post(84) hto_max_post(60)
     //&? The GenerateEventDummies program generates the "event group * relative months" dummies used in the event studies.
     //&? It also stores all regressors in a global macro ${four_events_dummies}.
 
@@ -80,8 +80,8 @@ macro drop CA30_HtoL_X_Post
 macro drop four_events_dummies
 
 local max_pre_period = 6
-local lto_max_post = 42
-local hto_max_post = 42
+local lto_max_post = 84
+local hto_max_post = 60
 
 foreach event in CA30_LtoL CA30_LtoH {
     global `event'_X_Pre `event'_X_Pre_Before`max_pre_period'
@@ -115,10 +115,10 @@ global four_events_dummies ///
     ${CA30_HtoL_X_Pre} ${CA30_HtoL_X_Post}
 
 display "${four_events_dummies}"
-    // CA30_LtoL_X_Pre_Before6 CA30_LtoL_X_Pre6 ... CA30_LtoL_X_Pre2 CA30_LtoL_X_Post0 CA30_LtoL_X_Post1 ... CA30_LtoL_X_Post42 CA30_LtoL_X_Pre_After42 
-    // CA30_LtoH_X_Pre_Before6 CA30_LtoH_X_Pre6 ... CA30_LtoH_X_Pre2 CA30_LtoH_X_Post0 CA30_LtoH_X_Post1 ... CA30_LtoH_X_Post42 CA30_LtoH_X_Pre_After42 
-    // CA30_HtoH_X_Pre_Before6 CA30_HtoH_X_Pre6 ... CA30_HtoH_X_Pre2 CA30_HtoH_X_Post0 CA30_HtoH_X_Post1 ... CA30_HtoH_X_Post42 CA30_HtoH_X_Pre_After42 
-    // CA30_HtoL_X_Pre_Before6 CA30_HtoL_X_Pre6 ... CA30_HtoL_X_Pre2 CA30_HtoL_X_Post0 CA30_HtoL_X_Post1 ... CA30_HtoL_X_Post42 CA30_HtoL_X_Pre_After42 
+    // CA30_LtoL_X_Pre_Before6 CA30_LtoL_X_Pre6 ... CA30_LtoL_X_Pre2 CA30_LtoL_X_Post0 CA30_LtoL_X_Post1 ... CA30_LtoL_X_Post84 CA30_LtoL_X_Pre_After84 
+    // CA30_LtoH_X_Pre_Before6 CA30_LtoH_X_Pre6 ... CA30_LtoH_X_Pre2 CA30_LtoH_X_Post0 CA30_LtoH_X_Post1 ... CA30_LtoH_X_Post84 CA30_LtoH_X_Pre_After84 
+    // CA30_HtoH_X_Pre_Before6 CA30_HtoH_X_Pre6 ... CA30_HtoH_X_Pre2 CA30_HtoH_X_Post0 CA30_HtoH_X_Post1 ... CA30_HtoH_X_Post60 CA30_HtoH_X_Pre_After60 
+    // CA30_HtoL_X_Pre_Before6 CA30_HtoL_X_Pre6 ... CA30_HtoL_X_Pre2 CA30_HtoL_X_Post0 CA30_HtoL_X_Post1 ... CA30_HtoL_X_Post60 CA30_HtoL_X_Pre_After60
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 3. event studies on the productivity outcome
@@ -126,7 +126,6 @@ display "${four_events_dummies}"
 
 foreach var in ProductivityStd {
 
-    if "`var'" == "ProductivityStd" global title "Sales bonus (s.d.)"
     if "`var'" == "ProductivityStd" global number "6"
 
     *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
@@ -166,5 +165,5 @@ foreach var in ProductivityStd {
 }
 
 keep PTGain_ProductivityStd month_90Conf coeff_90Conf lb_90Conf ub_90Conf month_95Conf coeff_95Conf lb_95Conf ub_95Conf
-keep if inrange(_n, 1, 42)
+keep if inrange(_n, 1, 60)
 save "${EventStudyResults}/CA30_Outcome6_ProductivityStd.dta", replace

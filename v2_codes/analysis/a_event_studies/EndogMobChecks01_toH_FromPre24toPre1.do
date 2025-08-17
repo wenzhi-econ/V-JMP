@@ -27,7 +27,7 @@ generate lAvPay      = log(AvPay)
 generate lAvPayBonus = log(AvPayBonus)
 
 global perf  lAvPay           lAvPayBonus       ShareChangeSalaryGrade AvBPRatio
-global mob   ShareTransferSJV ShareTransferFunc ShareSameAge           ShareSameGender
+global mob   ShareTransferSJV ShareTransferFunc ShareSameAge           ShareSameOffice
 global div   TeamFracFemale   TeamFracAgeBand   TeamFracOfficeCode     TeamFracCountry
 
 label variable CA30_toH "High-flyer manager"
@@ -63,7 +63,7 @@ global latex_midrule      "\midrule"
 global latex_bottomrule   "\bottomrule"
 global latex_numbers      "& \multicolumn{1}{c}{(1)} & \multicolumn{1}{c}{(2)} & \multicolumn{1}{c}{(3)} & \multicolumn{1}{c}{(4)} \\"
 global latex_titles_A     "& \multicolumn{1}{c}{Pay (logs)} & \multicolumn{1}{c}{Pay + bonus (logs)} & \multicolumn{1}{c}{Salary grade increase} & \multicolumn{1}{c}{Bonus/pay ratio} \\"
-global latex_titles_B     "& \multicolumn{1}{c}{Lateral move} & \multicolumn{1}{c}{Cross-functional move} & \multicolumn{1}{c}{Same gender} & \multicolumn{1}{c}{Same age} \\"
+global latex_titles_B     "& \multicolumn{1}{c}{Lateral move} & \multicolumn{1}{c}{Cross-functional move} & \multicolumn{1}{c}{Same age} & \multicolumn{1}{c}{Same office} \\"
 global latex_titles_C     "& \multicolumn{1}{c}{Diversity, gender} & \multicolumn{1}{c}{Diversity, age} & \multicolumn{1}{c}{Diversity, office} & \multicolumn{1}{c}{Diversity, nationality} \\"
 global latex_file         "${EventStudyResults}/CA30_EndogenousMobilityChecks_ToH_Pre24toPre1.tex"
 

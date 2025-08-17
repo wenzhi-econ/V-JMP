@@ -102,7 +102,7 @@ foreach var in SJVertSGC {
         , legend(off) ///
         xline(-1, lcolor(maroon)) yline(0, lcolor(maroon)) ///
         xlabel(-8(2)20, grid gstyle(dot) labsize(medsmall)) /// 
-        xtitle(Quarters since manager change, size(medlarge)) ///
+        xtitle("Quarters since manager change", size(medlarge)) ///
         ylabel(-0.3(0.05)0.3, grid gstyle(dot) labsize(medsmall)) ///
         note("Pre-trends joint p-value = ${PTLoss_`var'}")
     graph save "${EventStudyResults}/CA30_Outcome1_`var'_Coef2_Loss_Type1_Baseline.gph", replace   

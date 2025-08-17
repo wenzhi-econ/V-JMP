@@ -7,7 +7,6 @@ This do file constructs a set of variables that are used in heterogeneity analys
     OfficeSizeHigh1
     JobNum1
     LaborRegHigh1
-    LowFLFP1
     WPerf1
     WPerf0p10p901
     TeamPerfMBase1
@@ -20,7 +19,6 @@ Notes:
 Input:
     "${RawMNEData}/AllSnapshotWC.dta"                <== raw data 
     "${RawCntyData}/2.WEF ProblemFactor.dta"         <== raw data (country level)
-    "${RawCntyData}/3.WB FMShares Decade"            <== raw data (country level)
     "${TempData}/FinalFullSample.dta"                <== created in 0101_01 do file 
     "${TempData}/FinalAnalysisSample.dta"            <== created in 0103_03 do file 
     
@@ -244,23 +242,7 @@ generate  LaborRegHigh1 = 1 if LaborReg>=r(p50)
 replace   LaborRegHigh1 = 0 if LaborRegHigh1==. & LaborReg!=.
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-*-? s-3-8. female labor force participation, low  
-*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-
-generate Cohort = AgeBand
-merge m:1 ISOCode Cohort using "${RawCntyData}/3.WB FMShares Decade.dta", keepusing(FMShareEducWB FMShareWB)
-    drop if _merge==2
-    drop _merge  
-
-sort IDlse YearMonth
-bysort IDlse: egen FMShareEducWB1= mean(cond(Rel_Time==0, FMShareEducWB, .))
-
-summarize FMShareEducWB1, detail
-generate LowFLFP1 = 1 if FMShareEducWB1<=r(p50)
-replace  LowFLFP1 = 0 if LowFLFP1==. & FMShareEducWB1!=.
-
-*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-*-? s-3-9. worker performance, high   
+*-? s-3-8. worker performance, high   
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 xtset IDlse YearMonth 
@@ -302,14 +284,13 @@ label variable Young1            "The worker at the event time is below 30 years
 label variable OfficeSizeHigh1   "Post-event office size is large" 
 label variable JobNum1           "Post-event office has a large number of different StandardJobs" 
 label variable LaborRegHigh1     "Country is highly labor law regulated"
-label variable LowFLFP1          "Country has a low female labor force participation rate"
 label variable WPerf1            "The worker's baseline pay growth is above 50%"
 label variable WPerf0p10p901     "=1, if the worker's baseline pay growth is above 90%; =0, if below 10%"
 label variable TeamPerfMBase1    "The worker's associated team has a high baseline pay growth"
 
 keep Year - OfficeJobSize ///
     TenureMHigh1 SameOffice1 SameGender1 Young1 ///
-    OfficeSizeHigh1 JobNum1 LaborRegHigh1 LowFLFP1 ///
+    OfficeSizeHigh1 JobNum1 LaborRegHigh1 ///
     WPerf1 WPerf0p10p901 TeamPerfMBase1
 
 sort IDlse YearMonth

@@ -11,7 +11,8 @@ Input:
     "${RawMNEData}/Univoice.dta"                   <== raw data 
 
 Results:
-    "${Results}/.tex"
+    "${OtherResults}/CA30_SelfReportedSurveyOutcomes_PCAAndMean.tex"
+    "${OtherResults}/CA30_SelfReportedSurveyOutcomes_HeteroByTransfer.tex"
 
 RA: WWZ
 Time: 2025-06-02

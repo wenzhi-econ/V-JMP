@@ -80,7 +80,6 @@ keep if Month==9
 generate SurveyInd = 1 if mergeS==3
 replace  SurveyInd = 0 if mergeS==1
 
-
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 4. create the balance table
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
@@ -104,11 +103,9 @@ label variable Other     "Other Educ"
 label variable Tenure    "Tenure (years)"
 label variable CA30      "Have a high-flyer manager"
 
-global OtherResults "${Results}/OtherResults"
-
 balancetable SurveyInd $vars_list using "${OtherResults}/BTableSurveyAnswer.tex", ///
     replace pval cov(Office Year) vce(cluster IDlse) varlabels ///
     ctitles( "Non-respondents" "Survey respondents" "Difference") ///
     groups("{Mean / (SE)}" "{Difference in means / (p-value)}", pattern(1 0 1)) ///
-    postfoot("\hline\hline \end{tabular} \begin{tablenotes} \footnotesize \item" "Notes. An observation is a worker-year (in September for which year when the survey is administrated). This table compares average characteristics of the non-respondents (Column 1) to the subset of employees who responded to the employee survey (Column 2). Control variables include office and year fixed effects. Standard errors are clustered at the worker level." "\end{tablenotes}")
+    postfoot("\hline\hline \end{tabular}")
 
