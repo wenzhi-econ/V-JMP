@@ -257,13 +257,12 @@ total_age_i |
 	
 	
 	
-*** multiple age increases is fine as long as the middle age bracket has a resonable length (min. 109 occurrences)
+*** multiple age increases is fine as long as the middle age bracket has a resonable length - 120 months
 bysort IDlse AgeBand: gen age_occurrences= _N
 bysort IDlse AgeBand: egen max_occurrences= max(occurrence)	
 
 tab age_occurrences if occurrence==max_occurrences & id_age_increase==1
-* 18 observations have reasonable age increases
-gen resonable_age_increase= (age_occurrences>=109) if occurrence==max_occurrences & id_age_increase==1
+gen resonable_age_increase= (age_occurrences==120) if occurrence==max_occurrences & id_age_increase==1
 bysort IDlse: egen resonable_age= max(resonable_age_increase)
 drop resonable_age_increase
 
