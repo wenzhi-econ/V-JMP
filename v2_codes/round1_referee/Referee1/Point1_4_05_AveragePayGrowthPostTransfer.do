@@ -120,7 +120,7 @@ global eq L6_2Years L6_3Years L6_5Years L6_7Years
 esttab ${eq} using "${latex_file}", ///
     replace style(tex) fragment nocons label nofloat nobaselevels nonumbers noobs nomtitles collabels(,none) ///
     b(3) se(2) star(* 0.10 ** 0.05 *** 0.01) ///
-    keep(lc_1 lc_2) order(lc_1 lc_2) varlabels(lc_1 "LtoH - LtoL" lc_2 "HtoL - HtoH") ///
+    keep(lc_1) order(lc_1) varlabels(lc_1 "LtoH - LtoL") ///
     stats(cmean r_squared N, labels("Mean dependent variable, LtoL group" "R-squared" "N") fmt(%9.3f %9.3f %9.0g)) ///
     prehead("${latex_star}" "${latex_begintabular}" "${latex_toprule}" "${latex_toprule}") posthead("${latex_var}" "${latex_midrule}" "${latex_panels}" "${latex_numbers}" "${latex_midrule}") ///
     prefoot("${latex_midrule}") postfoot("${latex_bottomrule}" "${latex_bottomrule}" "${latex_endtabular}")

@@ -68,10 +68,10 @@ def store_results_as_string(data: pd.DataFrame, outcome: str) -> str:
     elif reg.pvalue()["CA30"] >= 0.1:
         diff_mean = f"${reg.coef()["CA30"]:.3f}$"
     diff_t = f"({reg.tstat()["CA30"]:<.3f})"
-    l_mean = f"{demo_data.loc[(demo_data["CA30"] == 0), outcome].mean():.3f}"
-    l_std = f"({demo_data.loc[(demo_data["CA30"] == 0), outcome].std():.3f})"
-    h_mean = f"{demo_data.loc[(demo_data["CA30"] == 1), outcome].mean():.3f}"
-    h_std = f"({demo_data.loc[(demo_data["CA30"] == 1), outcome].std():.3f})"
+    l_mean = f"{data.loc[(data["CA30"] == 0), outcome].mean():.3f}"
+    l_std = f"({data.loc[(data["CA30"] == 0), outcome].std():.3f})"
+    h_mean = f"{data.loc[(data["CA30"] == 1), outcome].mean():.3f}"
+    h_std = f"({data.loc[(data["CA30"] == 1), outcome].std():.3f})"
 
     line1 = "&" + f"{l_mean:<25}" + "&" + f"{h_mean:<25}" + "&" + f"{diff_mean:<25}" + "\\\\"
     line2 = "&" + f"{l_std:<25}" + "&" + f"{h_std:<25}" + "&" + f"{diff_t:<25}" + "\\\\"
