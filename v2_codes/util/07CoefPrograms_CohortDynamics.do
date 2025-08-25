@@ -102,7 +102,7 @@ forvalues yy = 2011(1)2020 {
 *-? step 3. store pre-event coefficients 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
-forvalues left_month_index = `pre_window_len'(-3)6 { // 36, 33, 30, ..., 6
+forvalues left_month_index = `pre_window_len'(-3)4 { // 36, 33, 30, ..., 6
 
     local quarter_index = `number_of_pre_quarters' + 1 - (`left_month_index'/3) 
         // 36 corresponds to 1, 31 corresponds to 2, ..., 4 corresponds to 11
@@ -245,7 +245,7 @@ if `test_pre_window_len'!=0 | `test_post_window_len'!=0 {
 }
 
 /* 
-I will take `pre_window_len'==36 and `post_window_len'==84 as an example and present corresponding local values in the comments.
+I will take `pre_window_len'==36 and `post_window_len'==60 as an example and present corresponding local values in the comments.
 */
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? step 1. produce matrices to store the results 
@@ -311,7 +311,7 @@ forvalues yy = 2011(1)2020 {
 *-? step 3. store pre-event coefficients 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
-forvalues left_month_index = `pre_window_len'(-3)6 { // 36, 33, 30, ..., 6
+forvalues left_month_index = `pre_window_len'(-3)4 { // 36, 33, 30, ..., 6
 
     local quarter_index = `number_of_pre_quarters' + 1 - (`left_month_index'/3) 
         // 36 corresponds to 1, 31 corresponds to 2, ..., 4 corresponds to 11
@@ -320,8 +320,8 @@ forvalues left_month_index = `pre_window_len'(-3)6 { // 36, 33, 30, ..., 6
     local right_month_index  = `left_month_index' - 2 // 34, 31, 28, ..., 4
 
     local li_weight   = `pre_window_len' + 1 - `left_month_index'   // 36 corresponds to 1, ..., 6 corresponds to 31
-    local mi_weight = `pre_window_len' + 1 - `middle_month_index' // 35 corresponds to 2, ..., 5 corresponds to 32
-    local ri_weight  = `pre_window_len' + 1 - `right_month_index'  // 34 corresponds to 3, ..., 4 corresponds to 33
+    local mi_weight = `pre_window_len' + 1 - `middle_month_index'   // 35 corresponds to 2, ..., 5 corresponds to 32
+    local ri_weight  = `pre_window_len' + 1 - `right_month_index'   // 34 corresponds to 3, ..., 4 corresponds to 33
 
     lincom ///
         ( ///

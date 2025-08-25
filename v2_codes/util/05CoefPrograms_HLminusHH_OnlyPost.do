@@ -56,11 +56,6 @@ matrix `quarter_index_mat'[1, 1] = 0
 *-? step 3. store the post-event coefficients 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
-* reset these macros to avoid contamination from the pre-event coefficients
-local right_month_index  = 0 
-local middle_month_index = 0 
-local left_month_index   = 0
-
 forvalues right_month_index = 3(3)`post_window_len' { 
     local quarter_index = (`right_month_index')/3 + 1
         // 3 corresponds to 2, 6 corresponds to 3, ..., 84 corresponds to 29

@@ -17,13 +17,6 @@ program define LH_minus_LL_Months_90, rclass
     The second two options specify the pre- and post-event window length, with default values 36 and 84, respectively.
     The last option specify the outcome variable, which will be used in generation of new variables to store the results.
     */
-    local test_pre_window_len  = mod(`pre_window_len', 3)
-    local test_post_window_len = mod(`post_window_len', 3)
-    if `test_pre_window_len'!=0 | `test_post_window_len'!=0 {
-        display as result _n "Specified pre- and/or post-window lengths are not suitable for CP quarter aggregation."
-        display as result _n "Program terminated."
-        exit
-    }
 
     /* 
     I will take `pre_window_len'==6 and `post_window_len'==36 as an example and present corresponding local values in the comments.
@@ -161,13 +154,6 @@ program define HL_minus_HH_Month_90, rclass
     The second two options specify the pre- and post-event window length, with default values 36 and 84, respectively.
     The last option specify the outcome variable, which will be used in generation of new variables to store the results.
     */
-    local test_pre_window_len  = mod(`pre_window_len', 3)
-    local test_post_window_len = mod(`post_window_len', 3)
-    if `test_pre_window_len'!=0 | `test_post_window_len'!=0 {
-        display as result _n "Specified pre- and/or post-window lengths are not suitable for CP quarter aggregation."
-        display as result _n "Program terminated."
-        exit
-    }
 
     /* 
     I will take `pre_window_len'==6 and `post_window_len'==36 as an example and present corresponding local values in the comments.
@@ -215,7 +201,7 @@ program define HL_minus_HH_Month_90, rclass
 
 
     lincom ///
-        (`event_prefix'_HtoH_X_Post0 - `event_prefix'_HtoL_X_Post0), level(90)
+        (`event_prefix'_HtoL_X_Post0 - `event_prefix'_HtoH_X_Post0), level(90)
     matrix `coefficients_mat'[`number_of_pre_months' + 1, 1]  = r(estimate)
     matrix `lower_bound_mat'[`number_of_pre_months' + 1, 1]   = r(lb)
     matrix `upper_bound_mat'[`number_of_pre_months' + 1, 1]   = r(ub)
