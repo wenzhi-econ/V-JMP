@@ -18,6 +18,22 @@ impt: This dataset will be used frequently if full sample dataset is required.
 
 RA: WWZ 
 Time: 2025-08-05
+
+Notes on some details about the data cleaning process:
+    (1) Accounting for missing values:
+        SalaryGrade=785 indicates missing values 
+        SubFunc=94 indicates missing values
+        Func=13 indicates missing values
+    (2) Specific issues on the StandardJob variable:
+        (i) In some observations, the string contains "Do Not Use"  -- in various formats, e.g., Digital R&D Specialist (Do Not Use), DO NOT USE Digital R&D Specialist, VP Finance BP - DO NOT USE.
+        (ii) This affect 0.4% of total observations, but around 11% of total employees.
+        (iii) I will treat these observations, and impute with the last non-missing value for that employee. This procedure also fits the pattern of the "Do Not Use".
+        (iv) This is the conservative procedure, as this controversial value will never lead to any standard job change in the final constructed variable.
+    (3) Specific issues on the Func variable:
+        (i) Func=17 and Func=18 both indicate the "Data and Analytics" function.
+
+RA: AT & WWZ
+Time: 2025-08-25
 */
 
 use "${RawMNEData}/AllSnapshotWC.dta", clear
@@ -33,8 +49,8 @@ sort IDlse YearMonth
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 sort IDlse YearMonth
-generate ChangeSalaryGrade = 0 & SalaryGrade!=.
-replace  ChangeSalaryGrade = 1 if IDlse==IDlse[_n-1] & SalaryGrade!=SalaryGrade[_n-1] & SalaryGrade!=.
+generate ChangeSalaryGrade = 0
+replace  ChangeSalaryGrade = 1 if IDlse==IDlse[_n-1] & SalaryGrade!=SalaryGrade[_n-1] & SalaryGrade!=785 & SalaryGrade[_n-1]!=785
 
 sort IDlse YearMonth
 bysort IDlse: generate ChangeSalaryGradeC = sum(ChangeSalaryGrade)
@@ -54,15 +70,26 @@ bysort IDlse: generate PromWLC = sum(PromWL)
 *-? s-2-1. standard job changes 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
+*!! accounting for the "Do Not Use" observations
+
+generate SJ_not_use = regexm(upper(StandardJob), "DO NOT USE")
+order    SJ_not_use, after(StandardJob)
+
+capture drop CleanJob
+generate CleanJob = StandardJob
+replace  CleanJob = "" if SJ_not_use==1
+replace  CleanJob = CleanJob[_n-1] if IDlse==IDlse[_n-1] & CleanJob=="" & CleanJob[_n-1]!=""
+order    CleanJob, after(StandardJob)
+
 sort IDlse YearMonth
-generate TransferSJ = 0 if StandardJob!="" 
-replace  TransferSJ = 1 if (IDlse==IDlse[_n-1] & StandardJob!=StandardJob[_n-1] & StandardJob!="")
+generate TransferSJ = 0
+replace  TransferSJ = 1 if (IDlse==IDlse[_n-1] & CleanJob!=CleanJob[_n-1] & CleanJob!="" & CleanJob[_n-1]!="")
 
 sort IDlse YearMonth
 bysort IDlse: generate TransferSJC = sum(TransferSJ)
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-*-? s-2-2. standard job changes with salary grade changes
+*-? s-2-2. standard job changes with simultaneous salary grade changes
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 generate TransferSJV = TransferSJ
@@ -75,9 +102,12 @@ bysort IDlse: generate TransferSJVC = sum(TransferSJV)
 *-? s-2-3. function changes 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
+*!! accounting for "Data and Analytics" function 
+replace Func=17 if Func==18
+
 sort IDlse YearMonth
-generate TransferFunc = 0 if Func!=.
-replace  TransferFunc = 1 if IDlse==IDlse[_n-1] & Func!=Func[_n-1]  & Func!=.
+generate TransferFunc = 0
+replace  TransferFunc = 1 if IDlse==IDlse[_n-1] & Func!=Func[_n-1] & Func!=13 & Func[_n-1]!=13
 
 sort IDlse YearMonth
 bysort IDlse: generate TransferFuncC = sum(TransferFunc)
@@ -87,39 +117,24 @@ bysort IDlse: generate TransferFuncC = sum(TransferFunc)
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 sort IDlse YearMonth
-generate TransferSubFunc = 0 if SubFunc!=.
-replace  TransferSubFunc = 1 if IDlse==IDlse[_n-1] & SubFunc!=SubFunc[_n-1] & SubFunc!=.
+generate TransferSubFunc = 0
+replace  TransferSubFunc = 1 if IDlse==IDlse[_n-1] & SubFunc!=SubFunc[_n-1] & SubFunc!=94 & SubFunc[_n-1]!=94
 
 sort IDlse YearMonth
 bysort IDlse: generate TransferSubFuncC = sum(TransferSubFunc)
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-2-5. internal transfers
+*-?        either office, subfunc, or org4
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
-*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!
-*!! s-2-5-1. measure 1: either office, subfunc, or org4
-*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!
-
 sort IDlse YearMonth
-generate TransferInternal = 0 & Office!=. & SubFunc!=. & Org4!=. 
+generate TransferInternal = 0 
 replace  TransferInternal = 1 if IDlse==IDlse[_n-1] & ///
-    ((OfficeCode!=OfficeCode[_n-1] & OfficeCode!=.) | (SubFunc!=SubFunc[_n-1] & SubFunc!=.) | (Org4!=Org4[_n-1] & Org4!=.))
+    ( (Office!=Office[_n-1]) | (SubFunc!=SubFunc[_n-1] & SubFunc!=94 & SubFunc[_n-1]!=94) | (Org4!=Org4[_n-1] & Org4!=. & Org4[_n-1]!=.) )
 
 sort IDlse YearMonth
 bysort IDlse: generate TransferInternalC = sum(TransferInternal)
-
-*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!
-*!! s-2-5-2. measure 2: either office, StandardJob, or org4
-*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!*!!
-
-sort IDlse YearMonth
-generate TransferInternalSJ = 0 if Office!=. & StandardJob!="" & Org4!=. 
-replace  TransferInternalSJ = 1 if IDlse==IDlse[_n-1] & ///
-    ((OfficeCode!=OfficeCode[_n-1] & OfficeCode!=.) | (StandardJob!=StandardJob[_n-1] & StandardJob!="") | (Org4!=Org4[_n-1] & Org4!=.))
-
-sort IDlse YearMonth
-bysort IDlse: generate TransferInternalSJC = sum(TransferInternalSJ)
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 3. outcome variables: earnings
@@ -133,17 +148,13 @@ generate PayBonus      = Pay + Bonus
 generate LogPayBonus   = log(PayBonus)
 generate BonusPayRatio = Bonus/Pay
 
-label variable LogPayBonus "Pay + bonus (logs)"
-label variable LogPay      "Pay (logs)"
-label variable LogBonus    "Bonus (logs)"
-
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
-*?? step 5. manager id imputations  
+*?? step 4. manager id imputations  
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 
 foreach var in IDlseMHR {
-	replace `var' = l1.`var' if IDlseMHR==. & l1.IDlseMHR!=. 
-	replace `var' = f1.`var' if IDlseMHR==. & f1.IDlseMHR!=. & l1.IDlseMHR==. 
+    replace `var' = l1.`var' if IDlseMHR==. & l1.IDlseMHR!=. 
+    replace `var' = f1.`var' if IDlseMHR==. & f1.IDlseMHR!=. & l1.IDlseMHR==. 
 }
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
@@ -162,7 +173,7 @@ order ///
     TransferSJV TransferSJVC TransferSJ TransferSJC ///
     ChangeSalaryGrade ChangeSalaryGradeC PromWL PromWLC ///
     TransferFunc TransferFuncC TransferSubFunc TransferSubFuncC ///
-    TransferInternal TransferInternalC TransferInternalSJ TransferInternalSJC ///
+    TransferInternal TransferInternalC ///
     LogPayBonus LogPay LogBonus Pay Bonus ///
     Leaver LeaverPerm LeaverVol LeaverInv
 
@@ -185,22 +196,20 @@ label variable OfficeCode          "Work location code: Office or Plant/Factory"
 label variable StandardJob         "Standard job title"
 label variable SalaryGrade         "Salary grade"
 label variable VPA                 "Performance rating"
-label variable TransferSJ          "= 1 in months when an individual's StandardJob is diff. than preceding months"
+label variable TransferSJ          "= 1 in months when an individual's StandardJob is diff. from preceding months"
 label variable TransferSJC         "Cumulative count of TransferSJ for an individual"
-label variable TransferSJV         "= 1 when his StandardJob is diff. than last month but SalaryGrade is the same"
+label variable TransferSJV         "= 1 when his StandardJob and SalaryGrade are diff. from last month"
 label variable TransferSJVC        "Cumulative count of TransferSJV for an individual"
-label variable ChangeSalaryGrade   "= 1 in months when an individual's SalaryGrade is diff. than preceding months"
+label variable ChangeSalaryGrade   "= 1 in months when an individual's SalaryGrade is diff. from preceding months"
 label variable ChangeSalaryGradeC  "Cumulative count of ChangeSalaryGrade for an individual"
-label variable PromWL              "= 1 in months when WL is greater than preceding months"
+label variable PromWL              "= 1 in months when WL is greater from preceding months"
 label variable PromWLC             "Cumulative count of PromWL for an individual"
-label variable TransferFunc        "= 1 in months when an individual's Func is diff. than preceding months"
+label variable TransferFunc        "= 1 in months when an individual's Func is diff. from preceding months"
 label variable TransferFuncC       "Cumulative count of TransferFunc for an individual"
-label variable TransferSubFunc     "= 1 in months when SubFunc is diff. than preceding months"
+label variable TransferSubFunc     "= 1 in months when SubFunc is diff. from preceding months"
 label variable TransferSubFuncC    "Cumulative count of TransferSubFuncC for an individual"
-label variable TransferInternal    "= 1 in months when either SubFunc or Office or Org4 is diff than last months"
+label variable TransferInternal    "= 1 in months when either SubFunc or Office or Org4 is diff from last months"
 label variable TransferInternalC   "Cumulative count of TransferInternal for an individual"
-label variable TransferInternalSJ  "= 1 in months when either StandardJob or Office or Org4 is diff than last months"
-label variable TransferInternalSJC "Cumulative count of TransferInternalSJ for an individual"
 label variable LogPayBonus         "Pay + bonus (logs)"
 label variable LogPay              "Pay (logs)"
 label variable LogBonus            "Bonus (logs)"

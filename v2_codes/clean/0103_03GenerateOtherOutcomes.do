@@ -22,8 +22,8 @@ Description of the output dataset:
 
 impt: This dataset will be used frequently if analysis sample dataset is required.
 
-RA: WWZ 
-Time: 2025-08-05
+RA: WWZ & AT
+Time: 2025-08-25
 */
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
@@ -70,7 +70,7 @@ keep ///
     TransferSJV TransferSJVC TransferSJ TransferSJC ///
     ChangeSalaryGrade ChangeSalaryGradeC PromWL PromWLC ///
     TransferFunc TransferFuncC TransferSubFunc TransferSubFuncC ///
-    TransferInternal TransferInternalC TransferInternalSJ TransferInternalSJC ///
+    TransferInternal TransferInternalC ///
     LogPayBonus LogPay LogBonus Pay Bonus ///
     Leaver LeaverPerm LeaverVol LeaverInv /// 
     Func SubFunc Org4 Office OfficeCode StandardJob SalaryGrade ///
@@ -88,7 +88,7 @@ order ///
     TransferSJV TransferSJVC TransferSJ TransferSJC ///
     ChangeSalaryGrade ChangeSalaryGradeC PromWL PromWLC ///
     TransferFunc TransferFuncC TransferSubFunc TransferSubFuncC ///
-    TransferInternal TransferInternalC TransferInternalSJ TransferInternalSJC ///
+    TransferInternal TransferInternalC ///
     LogPayBonus LogPay LogBonus Pay Bonus ///
     Leaver LeaverPerm LeaverVol LeaverInv /// 
     Func SubFunc Org4 Office OfficeCode StandardJob SalaryGrade ///
@@ -100,7 +100,7 @@ label variable Year                "Year"
 label variable occurrence          "Sequential occurrence number for each employee in that month"
 label variable IDlseMHR            "Manager ID"
 
-label variable TransferSJV         "= 1 when his StandardJob is diff. than last month but SalaryGrade is the same"
+label variable TransferSJV         "= 1 when his StandardJob and SalaryGrade are diff. from last month"
 label variable TransferSJVC        "Cumulative count of TransferSJV for an individual"
 label variable TransferSJ          "= 1 in months when an individual's StandardJob is diff. than preceding months"
 label variable TransferSJC         "Cumulative count of TransferSJ for an individual"
@@ -114,8 +114,6 @@ label variable TransferSubFunc     "= 1 in months when SubFunc is diff. than pre
 label variable TransferSubFuncC    "Cumulative count of TransferSubFuncC for an individual"
 label variable TransferInternal    "= 1 in months when either SubFunc or Office or Org4 is diff than last months"
 label variable TransferInternalC   "Cumulative count of TransferInternal for an individual"
-label variable TransferInternalSJ  "= 1 in months when either StandardJob or Office or Org4 is diff than last months"
-label variable TransferInternalSJC "Cumulative count of TransferInternalSJ for an individual"
 
 label variable LogPayBonus         "Pay + bonus (logs)"
 label variable LogPay              "Pay (logs)"
@@ -190,16 +188,11 @@ label variable ONETDistC "Cumulate sum of task distance"
 *-? s-2-1. auxiliary variable: ChangeM and TransferSJSameM
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
-*!! first month for a worker
-sort IDlse YearMonth
-bysort IDlse: egen temp_first_month = min(YearMonth)
-
 *!! if the worker changes his manager 
 capture drop ChangeM
 generate ChangeM = 0 
 replace  ChangeM = 1 if (IDlse[_n]==IDlse[_n-1] & IDlseMHR[_n]!=IDlseMHR[_n-1])
-replace  ChangeM = 0  if YearMonth==temp_first_month & ChangeM==1
-replace  ChangeM = . if IDlseMHR==. 
+replace  ChangeM = . if IDlseMHR==. & IDlseMHR[_n-1]==.
 
 *!! lateral transfer under the same manager
 generate TransferSJSameM = TransferSJ
@@ -227,12 +220,12 @@ bysort IDlse: generate TransferSJSameMSameFuncC= sum(TransferSJSameMSameFunc)
 
 *!! category (2): different manager + different function
 *&& variable TransferFunc can accurately describe this category
+replace TransferFunc=0 if TransferSJ==0
 
-*!! drop and order 
-drop temp_first_month
-
+*!! order the final variables
 order TransferSJSameMSameFunc TransferSJSameMSameFuncC TransferSJDiffMSameFunc TransferSJDiffMSameFuncC TransferFunc TransferFuncC, after(TransferSJC)
 order ChangeM, after(IDlseMHR)
+drop  TransferSJSameM
 
 label variable TransferSJC               "Cumulative count of all standard job changes"
 label variable TransferSJSameMSameFunc   "= 1 in months when within team standard job changes happen"
@@ -243,7 +236,10 @@ label variable TransferFunc              "= 1 in months when diff. team, differe
 label variable TransferFuncC             "Cumulative count of diff. team, different function standard job changes"
 label variable ChangeM                   "= 1 in months when an individual's manager is diff. than last months"
 
-drop TransferSJSameM
+egen test = rowtotal(TransferSJSameMSameFunc TransferSJDiffMSameFunc TransferFunc)
+count if test != TransferSJ
+    //tocheck: 0, test passed
+capture drop test
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 4. save the final dataset for event studies 

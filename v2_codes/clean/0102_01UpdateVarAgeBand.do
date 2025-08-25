@@ -14,6 +14,16 @@ Description of the output dataset:
 
 RA: WWZ 
 Time: 2025-04-10
+
+Notes on some other details about the variable construction:
+    Procedures on checking the original AgeBand variable:
+        (1) Deal with <18 and unknown AgeBand values.
+        (2) Deal with decreasing AgeBand values.
+        (3) Deal with multiple increases in AgeBand values.
+        (4) Deal with employees who stay in the same AgeBand value for too long (i.e., more than 10 years).
+    
+RA: AT & WWZ
+Time: 2025-08-25
 */
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
@@ -40,7 +50,7 @@ bysort IDlse: generate occurrence = _n
 order occurrence, after(YearMonth)
 summarize occurrence, detail  
     //&? max: 132
-    //&? impossible to go through two age band changes  
+    //&? possible to go through two age band changes  
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 1. update AgeBand variable: deal with <18 and unknown values 
@@ -201,7 +211,7 @@ order Tenure WL Year IDlse YearMonth occurrence count AgeBand
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-*-? s-3-1. investigate those age increases 
+*-? s-3-1. investigate those reasonable age increases 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 generate age_increase = . 
@@ -235,51 +245,57 @@ total_age_i |
       Total |    224,108      100.00
 */
     //&? only 56 employees with 2 AgeBand increases
+    //&? as said before, it is possible for one worker to have 2 AgeBand increases
+
+sort IDlse AgeBand YearMonth
+bysort IDlse AgeBand: generate age_occurrences= _N
+bysort IDlse AgeBand: egen max_occurrences= max(occurrence)	
+
+tab age_occurrences if occurrence==max_occurrences & id_age_increase==1
+generate reasonable_age_increase= (age_occurrences==120) if occurrence==max_occurrences & id_age_increase==1
+bysort IDlse: egen reasonable_age= max(reasonable_age_increase)
+    //&? mark these employees with 2 reasonable AgeBand increases
+drop reasonable_age_increase
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-*-? s-3-2. investigate those age increases 
+*-? s-3-2. replace those unreasonable age increases 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-
-*!! s-3-2-1. when did the second AgeBand increase happen in an employee's panel?
-capture drop rate 
-generate rate=occurrence/count if age_increase==1 & total_age_increase==2 & id_age_increase==2
-sort IDlse YearMonth
-bysort IDlse: egen ind_rate = mean(rate)
-tabulate rate if age_increase==1 & total_age_increase==2 & id_age_increase==2
 /* 
-two observations:
-    (1) among those 56 employees, 21 employees have their second AgeBand increase in their last occurrence in the data. for these 21 employees, it is obvious I should not use their second AgeBand increase to determine their age.
-    (2) among these 56 employees, 6 employees have their second AgeBand increase in their first half of the data. for these 6 employees, it is obvious that I should use their second AgeBand increase to determien their age.
-
-    finally, I decide to use the 50% cutoff: depending on which half the second AgeBand increase happens, I will use different times of AgeBand increase to determine their AgeBand.
+Notes: 
+    I am going to use the latest age band as the correct value since age band can be corrected when worker notices the mistake.
 */
 
-*!! s-3-2-2. use first or second AgeBand increase to infer age 
-generate first_increase  = (ind_rate>0.5) if ind_rate!=.
-generate second_increase = (ind_rate<0.5) if ind_rate!=.
+*!! s-3-2-1. replace the AgeBand using the latest version if an employee has two AgeBand increases but they are not marked as reasonable
+gsort IDlse -YearMonth 
+replace AgeBand = AgeBand[_n-1] if id_age_increase==0 & total_age_increase==2 & reasonable_age==0
 
-*!! s-3-2-3. AgeBand at first and second increase 
-sort IDlse YearMonth
-bysort IDlse: egen AgeBand_first_increase  = min(cond(id_age_increase==1 & total_age_increase==2, AgeBand, .))
-bysort IDlse: egen AgeBand_second_increase = min(cond(id_age_increase==2 & total_age_increase==2, AgeBand, .))
-label values AgeBand_first_increase  AgeBand
-label values AgeBand_second_increase AgeBand
+*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
+*?? step 4. update AgeBand variable: 
+*??         deal with workers who stay in the same AgeBand for too long
+*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
+/* 
+Notes:
+    I will decrease some AgeBand values if an employee has the same AgeBand for more than 10 years
+*/
 
-*!! s-3-2-4. update AgeBand
-replace AgeBand = AgeBand_second_increase-1 if id_age_increase<2  & total_age_increase==2
-replace AgeBand = AgeBand_first_increase    if id_age_increase==2 & total_age_increase==2
-
-*!! s-3-2-5. test: only one AgeBand increase 
-/* capture drop age_increase
+sort IDlse YearMonth 
+drop age_increase age_occurrences
 generate age_increase = . 
 replace  age_increase = 1 if IDlse[_n]==IDlse[_n-1] & AgeBand[_n]>AgeBand[_n-1]
 replace  age_increase = 0 if IDlse[_n]==IDlse[_n-1] & AgeBand[_n]==AgeBand[_n-1]
 replace  age_increase = 0 if IDlse[_n]!=IDlse[_n-1]
-codebook age_increase //&? max=1, pass the test 
-codebook AgeBand      //&? range: [1,6], pass the test */
 
-keep  Tenure WL Year IDlse YearMonth occurrence count AgeBand
-order Tenure WL Year IDlse YearMonth occurrence count AgeBand
+sort   IDlse YearMonth
+bysort IDlse: egen total_age_inc_new = total(age_increase)
+bysort IDlse AgeBand: generate age_occurrences= _N
+
+generate decrement=age_occurrences-120 if total_age_increase==2 & total_age_inc_new==1
+replace  decrement=. if decrement<=0 & !missing(decrement)
+replace  AgeBand=AgeBand-1 if occurrence<=decrement & !missing(decrement)
+
+*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
+*?? final step. keep only relevant variables
+*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 
 rename AgeBand AgeBandUpdated
 

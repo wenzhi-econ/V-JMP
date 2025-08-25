@@ -13,8 +13,8 @@ Description of the output dataset:
         (1) For those employees whose AgeBandUpdated (an updated version of AgeBand variable to get rid of some relevant measurement errors) has crossed the threshold, their exact age can be identified from the increase in AgeBandUpdated. 
         (2) For those employees whose AgeBand does not experience changes in the dataset, their age is imputed based on their length of presence in the dataset. The imputation starts from the midpoint and extends at an equal speed to both ends of the band.
 
-RA: WWZ 
-Time: 2025-04-10
+RA: WWZ & AT
+Time: 2025-08-25
 */
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
@@ -60,11 +60,11 @@ gsort -q_exact_age IDlse YearMonth
 
 *!! s-1-3-1. AgeBand_atchange
 sort IDlse YearMonth
-bysort IDlse: egen AgeBand_atchange = mean(cond(age_change==1, AgeBandUpdated, .))
+bysort IDlse: egen AgeBand_atchange = min(cond(age_change==1, AgeBandUpdated, .))
 label value AgeBand_atchange AgeBand
 
 *!! s-1-3-2. date of birth: DOB
-bysort IDlse: egen DOB_exact = mean(cond(age_change==1, YearMonth, .))
+bysort IDlse: egen DOB_exact = min(cond(age_change==1, YearMonth, .))
 format DOB_exact %tm
 replace DOB_exact = DOB_exact - 360 if AgeBand_atchange==2 // 360 = 30 * 12
 replace DOB_exact = DOB_exact - 480 if AgeBand_atchange==3 // 480 = 40 * 12

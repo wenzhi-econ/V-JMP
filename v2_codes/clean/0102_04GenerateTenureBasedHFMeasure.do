@@ -13,14 +13,14 @@ Output:
 
 Description of the main output dataset:
     (1) It contains the full panel of those employees who have ever been WL2 in the dataset.
-    (2) Only for those employees can current age-based HF measure be constructed.
+    (2) Only for those employees can current tenure-based HF measure be constructed.
     (3) The variables are named as: IDlseMHR IDMngr_Pre IDMngr_Post YearMonth TB05.
         (a) The three ID variables are exactly the same. Their existence is for the convenience of future merge.
         (b) The existence of YearMonth means that the dataset is in employee-year-month level. Even though the HF measure is individual-specific (i.e., doesn't vary with time), in the future merge, we also wish the employee's manager is in the dataset at the same time.
         (c) TB05 is the high-flyer manager measure. 
 
-RA: WWZ 
-Time: 2025-08-05
+RA: WWZ & AT
+Time: 2025-08-25
 */
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??

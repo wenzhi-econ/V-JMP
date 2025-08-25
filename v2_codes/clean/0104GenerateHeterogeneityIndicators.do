@@ -30,10 +30,10 @@ Output:
 
 Description of the main output dataset:
     (1) It adds heterogeneity indicators used in heterogeneity table to the basic final analysis sample dataset "FinalAnalysisSample.dta".
-    (2) This dataset is only used for the heterogeneity table (0304 do file).
+    (2) This dataset is only used for the heterogeneity table.
 
-RA: WWZ 
-Time: 2025-04-16
+RA: WWZ & AT
+Time: 2025-08-25
 */
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
@@ -103,36 +103,12 @@ sort  IDlse YearMonth
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 merge m:1 IDlseMHR YearMonth using "${TempData}/0104Mngr_Characteristics.dta", keep(match master) nogenerate
-/* 
-    Result                      Number of obs
-    -----------------------------------------
-    Not matched                         6,948
-        from master                     6,948  
-        from using                          0  
-
-    Matched                         1,904,711  
-    -----------------------------------------
-*/
 
 merge m:1 IDlseMHR YearMonth using "${TempData}/0104Mngr_TeamPayGrowth.dta", keepusing(AvPayGrowth) keep(match master) nogenerate
-/* 
-    Result                      Number of obs
-    -----------------------------------------
-    Not matched                             0
-    Matched                         1,911,659  
-    -----------------------------------------
-*/
 
 merge m:1 OfficeCode YearMonth using "${TempData}/0104Office_Size.dta", keep(match master) nogenerate
-/* 
-    Result                      Number of obs
-    -----------------------------------------
-    Not matched                             0
-    Matched                         1,911,659  
-    -----------------------------------------
-*/
 
-//&? notice that the resulting dataset is based on "${TempData}/FinalAnalysisSample.dta", which contains only the analysis sample.
+    //impt: the resulting dataset is based on "${TempData}/FinalAnalysisSample.dta", which contains only the analysis sample
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-2-1. check the new variables 

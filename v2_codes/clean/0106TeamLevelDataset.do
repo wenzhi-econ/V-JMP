@@ -77,10 +77,10 @@ tabulate diff_IDMngr_Pre if occurrence==1, missing
 diff_IDMngr |
        _Pre |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |     28,679       97.32       97.32
-          1 |        791        2.68      100.00
+          0 |     28,630       97.30       97.30
+          1 |        793        2.70      100.00
 ------------+-----------------------------------
-      Total |     29,470      100.00
+      Total |     29,423      100.00
 */
     //&? only around 3% of event workers are assigned to a different pre-event manager
     //&? not a big case, but it could potentially affect the event worker's event group classification, which will be accounted for later 

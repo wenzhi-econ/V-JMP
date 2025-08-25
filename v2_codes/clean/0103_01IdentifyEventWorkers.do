@@ -22,6 +22,14 @@ Description of the main output dataset:
 
 RA: WWZ 
 Time: 2025-04-14
+
+Notes on more details about identifying the event employees:
+    (1) A manager change event is only defined for a month when current- and last-month manager id are different, and are both non-missing.
+    (2) A pure manager change event is defined based on a manager change event (variable ChangeM) and tow variables indicating internal transfers (TransferInternal TransferSJ).
+    (3) Only those employees whose observed first manage change event is also their first pure manager change event are included in the event study.
+
+RA: AT & WWZ 
+Time: 2025-08-25
 */
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
@@ -47,14 +55,10 @@ sort  IDlse YearMonth
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 sort IDlse YearMonth
-bysort IDlse: egen temp_first_month = min(YearMonth)
-
 generate ChangeM = 0 
 replace  ChangeM = 1 if (IDlse[_n]==IDlse[_n-1] & IDlseMHR[_n]!=IDlseMHR[_n-1])
-replace  ChangeM = 0  if YearMonth==temp_first_month & ChangeM==1
-replace  ChangeM = . if IDlseMHR==. 
-
-drop temp_first_month 
+replace  ChangeM = . if IDlseMHR==. & IDlseMHR[_n-1]==.
+order    ChangeM, after(IDlseMHR)
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-1-2. modify ChangeMR: pure manager changes
@@ -66,6 +70,7 @@ replace  ChangeMR = 0 if TransferInternal==1 | TransferSJ==1
     // impt: we only consider those manager changes without simultaneous internal or lateral transfers (pure manager change)
 replace  ChangeMR = . if ChangeM==.
 replace  ChangeMR = . if IDlseMHR==. 
+order    ChangeMR, after(ChangeM)
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-1-3. modify ChangeMR: first pure manager changes
@@ -75,7 +80,7 @@ sort IDlse YearMonth
 bysort IDlse: egen Date_FirstMngrChange     = min(cond(ChangeM==1,  YearMonth ,.))
 bysort IDlse: egen Date_FirstPureMngrChange = min(cond(ChangeMR==1, YearMonth, .))
 replace ChangeMR = 0 if Date_FirstPureMngrChange>Date_FirstMngrChange & ChangeMR==1
-    // impt: we only consider pure manager change, 
+    // impt: we only consider pure manager change
     // impt: if first manager change is not pure, we will not include these employees in the event studies
 replace ChangeMR = 0 if YearMonth>Date_FirstPureMngrChange
     // impt: we only consider the first pure manager change
@@ -107,12 +112,12 @@ keep if ChangeMR==1 | ChangeMR_1monthbefore==1
     //&? for each employee who satisfies condition (a), keep 2 observations (the month and one month before the manager change event)
 
 codebook IDlse
-    //&? 118,884 distinct employees 
+    //tocheck: 119,761 distinct employees 
 
 /* sort IDlse YearMonth
 bysort IDlse: generate test = _N 
 summarize test, detail 
-    //&? passed the test!
+    //&? all employees have two and only two observations; test passed!
 drop test  */
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
@@ -145,7 +150,7 @@ bysort IDlse: egen long IDlseMHR00 = mean(IDlseMHR0)
 
 keep if IDlseMHR00!=. & IDlseMHR1!=.
     //impt: keep a cross-section of event workers
-    //&? 29,826 distinct event workers
+    //tocheck: 29,452 distinct event workers
 
 keep IDlse YearMonth IDlseMHR00 IDlseMHR1
 rename (YearMonth IDlseMHR00 IDlseMHR1) (Event_Time IDMngr_Pre IDMngr_Post)

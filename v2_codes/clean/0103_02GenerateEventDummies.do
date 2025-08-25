@@ -29,7 +29,7 @@ drop _merge
     //impt: I will use event study sample, event workers, and analysis sample interchangeably.
 
 codebook IDlse
-    //&? expected to be 29,826; and it is
+    //tocheck: expected to be 29,452; and it is
 
 order IDlse YearMonth IDlseMHR Event_Time Event_Time_1monthbefore IDMngr_Pre IDMngr_Post
 
@@ -142,11 +142,16 @@ foreach measure in CA30 CA28 CA32 DA30 TB05 {
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 drop if CA30_LtoL==. | CA30_LtoH==. | CA30_HtoH==. |  CA30_HtoL==.
-    //&? drop 1,520 observations whose pre-event manager is not in the dataset in that event month 
+    //tocheck: drop 1,520 observations whose pre-event manager is not in the dataset in that event month
+drop if CA28_LtoL==. | CA28_LtoH==. | CA28_HtoH==. |  CA28_HtoL==.
+drop if CA32_LtoL==. | CA32_LtoH==. | CA32_HtoH==. |  CA32_HtoL==.
+drop if DA30_LtoL==. | DA30_LtoH==. | DA30_HtoH==. |  DA30_HtoL==.
+drop if TB05_LtoL==. | TB05_LtoH==. | TB05_HtoH==. |  TB05_HtoL==.
+    //tocheck: 0 observation is deleted, as expected
 
 codebook IDlse
     //&? a panel of event workers with identifiable event groups.
-    //&? 29,470 distinct employees, with 1,911,659 employee-year-month observations
+    //tocheck: 29,423 distinct employees, with 1,882,806 employee-year-month observations
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 4. obtain a final version dataset for all event study results 
