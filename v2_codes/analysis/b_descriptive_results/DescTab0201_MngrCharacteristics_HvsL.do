@@ -156,9 +156,7 @@ sort IDlse YearMonth
 *-? s-2-1. demographics 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
-generate Bachelor       = QualHigh>=10 if QualHigh!=.
-generate MBA            = QualHigh==13 if QualHigh!=.
-generate AboveSecondary = QualHigh>=6  if QualHigh!=.
+generate MBA = QualHigh==13 if QualHigh!=.
 
 generate Econ = (FieldHigh1 == 4 | FieldHigh2 == 4 | FieldHigh3 == 4) if FieldHigh1!=.
 generate Sci = (FieldHigh1 == 5 | FieldHigh1 == 7 | FieldHigh1 == 9 | FieldHigh1 == 14 | FieldHigh1 == 15 | FieldHigh1 == 17 | ///

@@ -3,13 +3,12 @@ This do file runs event study regressions on the productivity outcome.
 The high-flyer measure used here is CA30.
 
 Notes:
-    (1) Instead of controlling for individual and year-month fixed effects, I control for Country#YearMonth and Female#AgeBand fixed effects.
-    (2) All four treatment groups are included (though Lto and Hto groups do not have same time window), while never-treated workers are not. 
-    (3) The omitted group in the regressions are month -3, -2, and -1 for all four treatment groups.
-    (4) For LtoL and LtoH groups, the relative time period is [-6, +84], while for HtoH and HtoL groups, the relative time period is [-6, +60]. 
+    (1) All four treatment groups are included (though Lto and Hto groups do not have same time window), while never-treated workers are not. 
+    (2) The omitted group in the regressions are month -3, -2, and -1 for all four treatment groups.
+    (3) In the regression specification, for LtoL and LtoH groups, the relative time window is [-6, +84], while for HtoH and HtoL groups, the relative time window is [-6, +60]. In the visualization, only monthly coefficients [-6, +42] for the LtoH-LtoL are plotted.
 
-RA: WWZ 
-Time: 2025-07-02
+RA: WWZ & AT
+Time: 2025-08-25
 */
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??

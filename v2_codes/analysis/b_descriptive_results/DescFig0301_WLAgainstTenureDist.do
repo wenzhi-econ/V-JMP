@@ -43,8 +43,6 @@ generate Share4 = (noT1 + noT2 + noT3 + noT4+ noT5)/noTT
 egen tw = tag(Tenure)
 replace tw = 0 if Tenure>30
 generate Share0 = 0
-generate upper = 1 
-generate lower = 0
 
 twoway ///
     (rarea Share0 Share1 Tenure if tw==1, sort) ///

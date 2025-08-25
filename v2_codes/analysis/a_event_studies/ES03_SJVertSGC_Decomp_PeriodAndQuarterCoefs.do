@@ -38,54 +38,7 @@ use "${TempData}/FinalAnalysisSample.dta", clear
 *??         (3) different team (different manager), but same function
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 
-*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-*-? s-1-1. auxiliary variable: ChangeM and TransferSJSameM
-*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-
-*!! first month for a worker
-capture drop temp_first_month
 sort IDlse YearMonth
-bysort IDlse: egen temp_first_month = min(YearMonth)
-
-*!! if the worker changes his manager 
-capture drop ChangeM
-generate ChangeM = 0 
-replace  ChangeM = 1 if (IDlse[_n]==IDlse[_n-1] & IDlseMHR[_n]!=IDlseMHR[_n-1])
-replace  ChangeM = 0  if YearMonth==temp_first_month & ChangeM==1
-replace  ChangeM = . if IDlseMHR==. 
-
-*!! lateral transfer under the same manager
-capture drop TransferSJSameM
-generate TransferSJSameM = TransferSJ
-replace  TransferSJSameM = 0 if ChangeM==1 
-
-*!! category (3): different manager + same function
-capture drop TransferSJDiffMSameFunc
-capture drop TransferSJDiffMSameFuncC
-generate TransferSJDiffMSameFunc = TransferSJ 
-replace  TransferSJDiffMSameFunc = 0 if TransferFunc==1 
-replace  TransferSJDiffMSameFunc = 0 if TransferSJSameM==1
-sort IDlse YearMonth
-bysort IDlse: generate TransferSJDiffMSameFuncC= sum(TransferSJDiffMSameFunc)
-
-*!! category (1): same manager + same function
-capture drop TransferSJSameMSameFunc
-capture drop TransferSJSameMSameFuncC
-generate TransferSJSameMSameFunc = TransferSJ 
-replace  TransferSJSameMSameFunc = 0 if TransferFunc==1 
-replace  TransferSJSameMSameFunc = 0 if TransferSJDiffMSameFunc==1
-sort IDlse YearMonth
-bysort IDlse: generate TransferSJSameMSameFuncC= sum(TransferSJSameMSameFunc)
-
-*!! category (2): different manager + different function
-*&? variable TransferFunc can accurately describe this category
-
-*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-*-? s-1-2. decomposition 
-*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-
-sort IDlse YearMonth
-
 foreach var in TransferSJ TransferSJDiffMSameFunc TransferSJSameMSameFunc TransferFunc {
 
     if "`var'" == "TransferSJ"              local newvar SJVertSG
@@ -545,7 +498,7 @@ twoway ///
     (rcap lb_SJVertSGC_gains ub_SJVertSGC_gains quarter_SJVertSGC_gains, lcolor(ebblue)) ///
     , yline(0, lcolor(maroon)) xline(-1, lcolor(maroon)) ///
     xlabel(-8(2)28, grid gstyle(dot) labsize(medsmall)) /// 
-    ylabel(-0.3(0.05)0.3, grid gstyle(dot) labsize(medsmall)) ///
+    ylabel(-0.15(0.05)0.15, grid gstyle(dot) labsize(medsmall)) ///
     xtitle("Quarters since manager change", size(medlarge)) ytitle("Coefficient values", size(medlarge)) ///
     legend(label(2 "Within team") label(4 "Across teams, within function") label(6 "Across teams, across functions") label(8 "All lateral moves") order(8 2 4 6) position(6) ring(0) size(small))
 graph save "${EventStudyResults}/CA30_Outcome3_SJVertSGC_Decomp_OverlayingQuarterCoefs.gph", replace

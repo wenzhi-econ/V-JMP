@@ -13,8 +13,8 @@ Output:
     "${TempData}/DescTab0102_SummaryStatistics_FullSample.dta" <== dataset used to create the summary statistics table 
     "${Results}/SummaryStatistics_FullSample.tex"              <== final table 
 
-RA: WWZ 
-Time: 2025-03-12
+RA: WWZ & AT
+Time: 2025-08-25
 */
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
@@ -44,13 +44,10 @@ xtset IDlse YearMonth
 egen tag_Mngr = tag(IDlseMHR)
 egen tag_Ind = tag(IDlse)
 
-sort IDlse YearMonth
-bysort IDlse: egen temp_first_month = min(YearMonth)
 capture drop ChangeM
 generate ChangeM = 0 
 replace  ChangeM = 1 if (IDlse[_n]==IDlse[_n-1] & IDlseMHR[_n]!=IDlseMHR[_n-1])
-replace  ChangeM = 0  if YearMonth==temp_first_month & ChangeM==1
-replace  ChangeM = . if IDlseMHR==. 
+replace  ChangeM = . if IDlseMHR==. & IDlseMHR[_n-1]==.
 
 keep IDlse YearMonth IDlseMHR ///
     tag_Ind tag_Mngr ///
@@ -89,11 +86,13 @@ label variable Cohort4 "Share in cohort 50+"
 *!! education: fields of study 
 generate Econ = (FieldHigh1 == 4 | FieldHigh2 == 4 | FieldHigh3 == 4) if FieldHigh1!=.
 generate Sci = (FieldHigh1 == 5 | FieldHigh1 == 7 | FieldHigh1 == 9 | FieldHigh1 == 14 | FieldHigh1 == 15 | FieldHigh1 == 17 | ///
-FieldHigh2 == 5 | FieldHigh2 == 7 | FieldHigh2 == 9 | FieldHigh2 == 14 | FieldHigh2 == 15 | FieldHigh2 == 17 | ///
-FieldHigh3 == 5 | FieldHigh3 == 7 | FieldHigh3 == 9 | FieldHigh3 == 14 | FieldHigh3 == 15 | FieldHigh3 == 17) if FieldHigh1!=.
-generate Hum = (FieldHigh1 == 6 | FieldHigh2 == 6 | FieldHigh3 == 6 | FieldHigh1 == 11 | FieldHigh2 == 11 | FieldHigh3 == 11 | FieldHigh1 == 12 | FieldHigh2 == 12 | FieldHigh3 == 12 | FieldHigh1 == 13 | FieldHigh2 == 13 | FieldHigh3 == 13 | FieldHigh1 == 19 | FieldHigh2 == 19 | FieldHigh3 == 19) if FieldHigh1!=.
-generate Other = (Econ ==0 & Sci ==0 & Hum ==0  )  if FieldHigh1!=.
-generate Missing = FieldHigh1 ==. 
+    FieldHigh2 == 5 | FieldHigh2 == 7 | FieldHigh2 == 9 | FieldHigh2 == 14 | FieldHigh2 == 15 | FieldHigh2 == 17 | ///
+    FieldHigh3 == 5 | FieldHigh3 == 7 | FieldHigh3 == 9 | FieldHigh3 == 14 | FieldHigh3 == 15 | FieldHigh3 == 17) if FieldHigh1!=.
+generate Hum = (FieldHigh1 == 6 | FieldHigh2 == 6 | FieldHigh3 == 6 | FieldHigh1 == 11 | FieldHigh2 == 11 | FieldHigh3 == 11 | ///
+    FieldHigh1 == 12 | FieldHigh2 == 12 | FieldHigh3 == 12 | FieldHigh1 == 13 | FieldHigh2 == 13 | FieldHigh3 == 13 | ///
+    FieldHigh1 == 19 | FieldHigh2 == 19 | FieldHigh3 == 19) if FieldHigh1!=.
+generate Other = (Econ == 0 & Sci == 0 & Hum == 0)  if FieldHigh1!=.
+generate Missing = (FieldHigh1==.) 
 
 *!! set the above education variables at worker level, not individual-year-month level
 replace Econ    = . if tag_Ind==0 
@@ -134,6 +133,7 @@ bysort IDlse: egen NoMonths = sum(one)
 
 *!! # of supervisors per employee
 bysort IDlse: egen ChangeMTot = sum(ChangeM)
+replace ChangeMTot = ChangeMTot + 1
 
 *!! team size (i.e., # of workers per supervisor)
 sort IDlseMHR YearMonth IDlse 
