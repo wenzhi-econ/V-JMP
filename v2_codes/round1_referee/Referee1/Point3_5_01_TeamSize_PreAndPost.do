@@ -32,7 +32,7 @@ esttab reg1 reg2 using "${latex_file}", ///
     nomtitles collabels(,none) ///
     star(* 0.10 ** 0.05 *** 0.01) b(4) se(3) ///
     keep(CA30_toH) order(CA30_toH) varlabels(CA30_toH "High flyer manager") ///
-    stats(mean_toL r_squared N, labels("Mean, LtoL group" "R-squared" "N") fmt(%9.3f %9.3f %9.0g)) ///
+    stats(r_squared N, labels("R-squared" "N") fmt(%9.3f %9.0g)) ///
     prehead("\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}" "\begin{tabular}{lcc}" "\toprule" "\toprule" "& \multicolumn{2}{c}{Outcome: Team size} \\" "& \multicolumn{1}{c}{(1)} & \multicolumn{1}{c}{(2)} \\" "& \multicolumn{1}{c}{Pre-event} & \multicolumn{1}{c}{Post-event} \\") ///
     posthead("\midrule") ///
     prefoot("\midrule")  ///

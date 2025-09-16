@@ -225,10 +225,12 @@ generate HighIncomeHome     = .
 replace  HighIncomeHome     = 1 if IncomeGroup=="High income"
 replace  HighIncomeHome     = 0 if IncomeGroup=="Upper middle income" | IncomeGroup=="Low income" | IncomeGroup=="Lower middle income"
 
-label variable LowIncome      "Low income countries"
-label variable UpperMidIncome "Middle income countries"
+label variable LowIncome          "Low income countries"
+label variable UpperMidIncome     "Middle income countries"
+label variable HighIncome         "High income countries"
 label variable LowIncomeHome      "Low income home countries"
 label variable UpperMidIncomeHome "Middle income home countries"
+label variable HighIncomeHome     "High income home countries"
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-2-3. performance metrics (post-promotion)  
@@ -266,14 +268,14 @@ keep ///
     IDlse CA30 YearMonth Post_Promotion ///
     Female MBA Econ Sci Hum Other ///
     func_cd func_m func_sc func_o func_rd func_fi ///
-    MidCareerHire LowIncome UpperMidIncome LowIncomeHome UpperMidIncomeHome ///
+    MidCareerHire LowIncome UpperMidIncome HighIncome LowIncomeHome UpperMidIncomeHome HighIncomeHome ///
     PayGrowth WLAgg3 VPA LineManager
 
 order ///
     IDlse CA30 YearMonth Post_Promotion ///
     Female MBA Econ Sci Hum Other ///
     func_cd func_m func_sc func_o func_rd func_fi ///
-    MidCareerHire LowIncome UpperMidIncome LowIncomeHome UpperMidIncomeHome ///
+    MidCareerHire LowIncome UpperMidIncome HighIncome LowIncomeHome UpperMidIncomeHome HighIncomeHome ///
     PayGrowth WLAgg3 VPA LineManager
 
 save "${TempData}/R1_Point2_3_SummaryStatistics_MngrHvsL.dta", replace 
@@ -296,7 +298,7 @@ bysort IDlse: generate occurrence = _n
     //&? impt: these variables are time-invariant. 
     //&? thus, for each person, we need only one observation (restricted by condition if occurrence==1)
 
-balancetable CA30 Female MBA Econ Sci Hum Other LowIncomeHome UpperMidIncomeHome if occurrence==1 ///
+balancetable CA30 Female MBA Econ Sci Hum Other LowIncomeHome UpperMidIncomeHome HighIncomeHome if occurrence==1 ///
     using "${latex_file}", ///
     pval varla vce(cluster IDlse) ctitles("Low-flyers" "High-flyers" "Difference")   ///
     noli noobs replace nonumbers ///
@@ -309,7 +311,7 @@ balancetable CA30 Female MBA Econ Sci Hum Other LowIncomeHome UpperMidIncomeHome
 *-? s-3-2: work-related variables  
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
     
-balancetable CA30 func_cd MidCareerHire LowIncome UpperMidIncome if occurrence==1 ///
+balancetable CA30 MidCareerHire LowIncome UpperMidIncome HighIncome if occurrence==1 ///
     using "${latex_file}", ///
     pval varla vce(cluster IDlse)  ///
     noli noobs nonum append ///

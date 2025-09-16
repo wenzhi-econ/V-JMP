@@ -136,6 +136,6 @@ with open(path_output_table, "w") as f:
             f.write(f"{results[outcome][0]} \n")
             f.write(f"{results[outcome][1]} \n")
         f.write("\\midrule \n")
-    f.write("Observations & 24,504 & 8,694 & 33,198 \\\\")
+    f.write("Observations & 24,506 & 8,692 & 33,198 \\\\")
     f.write("\\bottomrule \\bottomrule \n")
     f.write("\\end{tabular} \n")
