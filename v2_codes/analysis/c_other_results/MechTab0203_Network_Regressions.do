@@ -1,16 +1,18 @@
 /* 
-This set of do files (0507) investigates whether H-type managers are more likely to move their subordinates to their pre-existing networks.
+This set of do files (MechTab02**) investigates whether H-type managers are more likely to move their subordinates to their pre-existing networks.
 
 In this do file, I run a set of cross-sectional regressions on whether the event worker is in their post-event managers' pre-existing networks within given years after the event.
 
 Input:
-    "${TempData}/FinalFullSample.dta" <== created in 0101_01 do file 
+    "${TempData}/FinalAnalysisSample.dta"                        <== created in 0103_03 do file 
+    "${TempData}/temp_PostEventMngrs_PastWorkInfo.dta"           <== created in MechTab0201 do file 
+    "${TempData}/temp_PostEventMngrs_PastMngrInfo.dta"           <== created in MechTab0202 do file 
+    "${TempData}/temp_PostEventMngrs_PastSubOrdinatesInfo.dta"   <== created in MechTab0202 do file 
+    "${TempData}/temp_PostEventMngrs_PastColleaguesInfo.dta"     <== created in MechTab0202 do file 
 
 Output:
-    "${TempData}/temp_PostEventMngrs.dta"
-        a list of post-event managers and their earliest involved event dates
-    "${TempData}/temp_PostEventMngrs_PastWorkInfo.dta"
-        for these managers, all their experienced subfunctions and offices before the earliest involved event dates
+    "${TempData}/MechTab0203_Network.dta"
+    "${OtherResults}/CA30_Network_LtoHvsLtoL.tex"
 
 RA: WWZ 
 Time: 2025-04-29

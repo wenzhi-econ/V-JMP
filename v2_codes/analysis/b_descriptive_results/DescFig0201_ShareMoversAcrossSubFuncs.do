@@ -4,9 +4,9 @@ This do file plots the average monthly move rates across subfunctions.
 Input:
     "${TempData}/FinalFullSample.dta" <== created in 0101 do file 
 
-Results:
-    "${Results}/AvgLateralMoveRatesAcrossSubfunctions.pdf"
-    "${Results}/AvgSalaryGradeIncreaseRatesAcrossSubfunctions.pdf"
+Output:
+    "${DescriptiveResults}/AcrossSubFunc_AvgTransferSJV.pdf"
+    "${DescriptiveResults}/AcrossSubFunc_AvgChangeSalaryGrade.pdf"
 
 RA: WWZ 
 Time: 2024-08-25

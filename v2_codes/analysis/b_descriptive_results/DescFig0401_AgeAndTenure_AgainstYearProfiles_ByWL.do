@@ -2,9 +2,10 @@
 This do file plots share of different WL across years, mean age of different WL across years, and mean tenure of different WL across years.
 
 Input:
-    "${TempData}/FinalFullSample.dta" <== created in 0101_01 do file 
+    "${TempData}/FinalFullSample.dta"      <== created in 0101_01 do file 
+    "${TempData}/0102_02AgeContinuous.dta" <== created in 0102_02 do file 
 
-Results:
+Output:
     "${DescriptiveResults}/Profile_ShareWL_Year.pdf"
     "${DescriptiveResults}/Profile_AgeWL_Year.pdf"
     "${DescriptiveResults}/Profile_TenureWL_Year.pdf"

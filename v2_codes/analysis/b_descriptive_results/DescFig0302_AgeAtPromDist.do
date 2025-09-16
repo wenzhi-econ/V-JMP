@@ -2,10 +2,11 @@
 This do file constructs the distribution of age at promotion (to WL2).
 
 Input:
-    "${TempData}/FinalFullSample.dta" <== created in 0101_01 do file
+    "${TempData}/FinalFullSample.dta"      <== created in 0101_01 do file
+    "${TempData}/0102_02AgeContinuous.dta" <== created in 0102_02 do file 
 
 Output:
-    "${DescriptiveResults}/AgeWL2FT_TenureRestriction.pdf"
+    "${DescriptiveResults}/MinAgeContinuousAtWL2.pdf"
 
 RA: WWZ 
 Time: 2025-07-10

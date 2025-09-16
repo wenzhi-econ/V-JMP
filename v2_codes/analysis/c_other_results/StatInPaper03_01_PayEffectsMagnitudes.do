@@ -79,7 +79,7 @@ display ///
     ${eff_7yrLater}/(1.05)^27 + ///
     ${eff_7yrLater}/(1.05)^28 + ///
     ${eff_7yrLater}/(1.05)^29
-    //&? 1.6765812
+    //&? 1.6759085
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-4-2. a money amount in USD
@@ -101,7 +101,7 @@ display "=================================================================="
 
 display "Calculation based on mean: "
 display ${eff_7yrLater} * r(mean) * 1.1194
-    //&? 11965.81
+    //&? 11961.744
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-4-3. tenure lengths according to a mincerian-style regression 
@@ -122,24 +122,23 @@ display "=================================================================="
 
 display "The constant term in the equation: "
 display ${eff_7yrLater} 
-    //&? 0.13526208
+    //&? .13521613
 display "The linear term in the equation: "
 display ${coef_1} 
-    //&? 0.02215986
+    //&? .0224455
 display "The quadratic term in the equation: "
 display ${coef_2} 
-    //&? -0.00045828
-
+    //&? -.00046742
 /* 
 To calculate the 7th year coefficient equivalent in the tenure regression, I solve for the following equation:
     ${coef_2} * x^2 + ${coef_1} * x = ${eff_7yrLater}, i.e.,
-    -0.00045828 * x^2 + 0.02215986 * x = 0.13526208
+    -0.00046742 * x^2 + 0.0224455 * x = 0.13521613
 
 The roots are calculated using the following Python codes:
     import numpy as np
-    linear_term_tenure_regression = 0.02215986
-    squared_term_tenure_regression = -0.00045828
-    effect_7yrslater = 0.13526208
+    linear_term_tenure_regression = 0.0224455
+    squared_term_tenure_regression = -0.00046742
+    effect_7yrslater = 0.13521613
 
     coefficients = [
         squared_term_tenure_regression,
@@ -149,7 +148,7 @@ The roots are calculated using the following Python codes:
     roots = np.roots(coefficients)
     print(f"The roots are: {roots}")
 which gives the following results:
-    The roots are: [41.18854592  7.16586623]
+    The roots are: [40.9569023   7.06307973]
 */
 
 log close

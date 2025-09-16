@@ -60,34 +60,34 @@ keep if Rel_Time==84
 medeff (regress SJLatWLVertSGC48 CA30_LtoH) (regress ChangeSalaryGradeC CA30_LtoH SJLatWLVertSGC48), treat(CA30_LtoH) mediate(SJLatWLVertSGC48) sims(1000) seed(7) vce(cluster IDMngr_Post)
 /* 
 Linear regression                               Number of obs     =      5,437
-                                                F(1, 2764)        =       7.11
-                                                Prob > F          =     0.0077
-                                                R-squared         =     0.0023
-                                                Root MSE          =     .52561
+                                                F(1, 2764)        =       7.22
+                                                Prob > F          =     0.0073
+                                                R-squared         =     0.0024
+                                                Root MSE          =     .52544
 
                         (Std. err. adjusted for 2,765 clusters in IDMngr_Post)
 ------------------------------------------------------------------------------
              |               Robust
 SJLatWLVe~48 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-   CA30_LtoH |   .0647117   .0242612     2.67   0.008     .0171399    .1122836
-       _cons |    .255951   .0087228    29.34   0.000     .2388471     .273055
+   CA30_LtoH |   .0651651   .0242598     2.69   0.007      .017596    .1127343
+       _cons |   .2554976    .008719    29.30   0.000     .2384012    .2725941
 ------------------------------------------------------------------------------
 
 Linear regression                               Number of obs     =      5,437
-                                                F(2, 2764)        =     697.07
+                                                F(2, 2764)        =     699.43
                                                 Prob > F          =     0.0000
-                                                R-squared         =     0.2275
-                                                Root MSE          =     1.0833
+                                                R-squared         =     0.2290
+                                                Root MSE          =     1.0799
 
                             (Std. err. adjusted for 2,765 clusters in IDMngr_Post)
 ----------------------------------------------------------------------------------
                  |               Robust
 ChangeSalaryGr~C | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 -----------------+----------------------------------------------------------------
-       CA30_LtoH |   .0355472   .0530318     0.67   0.503    -.0684388    .1395332
-SJLatWLVertSGC48 |   1.115601    .029992    37.20   0.000     1.056792     1.17441
-           _cons |   1.057014   .0228762    46.21   0.000     1.012157     1.10187
+       CA30_LtoH |   .0385878   .0530103     0.73   0.467    -.0653559    .1425315
+SJLatWLVertSGC48 |   1.116842   .0299826    37.25   0.000     1.058052    1.175633
+           _cons |   1.053575    .022812    46.19   0.000     1.008845    1.098305
 ----------------------------------------------------------------------------------
 (4,437 missing values generated)
 (4,437 missing values generated)
@@ -95,10 +95,10 @@ SJLatWLVertSGC48 |   1.115601    .029992    37.20   0.000     1.056792     1.174
 ------------------------------------------------------------------------------------
         Effect                 |  Mean           [95% Conf. Interval]
 -------------------------------+----------------------------------------------------
-        ACME                   |  .0725713      .0189417       .132079
-        Direct Effect          |  .0329003     -.0680858      .1395075
-        Total Effect           |  .1054715     -.0146094      .2193216
-        % of Tot Eff mediated  |  .6585831     -2.228406      5.981854
+        ACME                   |  .0731586      .0194619      .1327312
+        Direct Effect          |  .0359419     -.0650031      .1425057
+        Total Effect           |  .1091005     -.0109014      .2229351
+        % of Tot Eff mediated  |  .6431646     -2.280525      4.839945
 ------------------------------------------------------------------------------------
 */
-    //&? A mediation analysis reveals that \checked{$66\%$} of the higher salary is explained by lateral job changes.
+    //&? A mediation analysis reveals that \checked{$64\%$} of the higher salary is explained by lateral job changes.

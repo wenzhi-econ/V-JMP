@@ -1,5 +1,13 @@
 /* 
-This do file produces the active learning and flexible project table in the report.
+This do file produces the active learning and flexible project table in the paper.
+
+Input:
+    "${TempData}/FinalAnalysisSample.dta" <= created in 0103_03 do file
+    "${RawMNEData}/ActiveLearn.dta"       <== raw data 
+    "${RawMNEData}/FLEX.dta"              <== raw data 
+
+Output:
+    "${OtherResults}/CA30_ActiveLearningAndFlexibleProject.tex"
 
 RA: WWZ 
 Time: 2025-05-02

@@ -24,6 +24,7 @@ Input:
 Output:
     "${EventStudyResults}/CA30_Outcome2_SGRawC_Type5_CohortDynamics1_LtoHvsLtoL.txt"
     "${EventStudyResults}/CA30_Outcome2_SGRawC_Type5_CohortDynamics1_LtoHvsLtoL.dta"
+    "${EventStudyResults}/CA30_Outcome2_SGRawC_Coef1_Gains_Type5_CohortDynamics.gph"
 
 RA: WWZ 
 Time: 2025-07-16
@@ -168,9 +169,60 @@ foreach var in SGRawC {
 }
 
 keep coeff_* quarter_* lb_* ub_* 
-
 keep if inrange(_n, 1, 41)
-
 save "${EventStudyResults}/CA30_Outcome2_SGRawC_Type5_CohortDynamics1_LtoHvsLtoL.dta", replace 
 
 log close
+
+*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
+*?? step 3. visualize the results 
+*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
+
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+*-? s-3-1. prepare the datasets
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+
+use "${EventStudyResults}/CA30_Outcome2_SGRawC_Type1_Baseline.dta", clear 
+keep quarter_SGRawC_gains coeff_SGRawC_gains lb_SGRawC_gains ub_SGRawC_gains
+generate quarter = quarter_SGRawC_gains
+drop if quarter==.
+rename (quarter_SGRawC_gains coeff_SGRawC_gains lb_SGRawC_gains ub_SGRawC_gains) (quarter_SGRawC_CA30 coeff_SGRawC_CA30 lb_SGRawC_CA30 ub_SGRawC_CA30)
+save "${EventStudyResults}/CA30_Outcome2_SGRawC_Type1_Baseline_ForMerge.dta", replace 
+
+use "${EventStudyResults}/CA30_Outcome2_SGRawC_Type5_CohortDynamics1_LtoHvsLtoL.dta", clear 
+keep quarter_SGRawC_gains coeff_SGRawC_gains lb_SGRawC_gains ub_SGRawC_gains
+generate quarter = quarter_SGRawC_gains
+drop if quarter==.
+rename (quarter_SGRawC_gains coeff_SGRawC_gains lb_SGRawC_gains ub_SGRawC_gains) (quarter_SGRawC_CD coeff_SGRawC_CD lb_SGRawC_CD ub_SGRawC_CD)
+save "${EventStudyResults}/CA30_Outcome2_SGRawC_Type5_CohortDynamics1_LtoHvsLtoL_ForMerge.dta", replace 
+
+use "${EventStudyResults}/CA30_Outcome2_SGRawC_Type1_Baseline_ForMerge.dta", clear 
+merge 1:1 quarter using "${EventStudyResults}/CA30_Outcome2_SGRawC_Type5_CohortDynamics1_LtoHvsLtoL_ForMerge.dta", nogenerate 
+
+replace quarter_SGRawC_CA30 = quarter_SGRawC_CA30 - 0.2
+replace quarter_SGRawC_CD   = quarter_SGRawC_CD + 0.2
+
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+*-? s-3-2. contrast TWFE against the cohort-dynamics specification
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+
+twoway ///
+    (scatter coeff_SGRawC_CA30 quarter_SGRawC_CA30, lcolor(ebblue) mcolor(ebblue)) ///
+    (rcap lb_SGRawC_CA30 ub_SGRawC_CA30 quarter_SGRawC_CA30, lcolor(ebblue)) ///
+    (scatter coeff_SGRawC_CD quarter_SGRawC_CD, lcolor("237 68 74") mcolor("237 68 74")) ///
+    (rcap lb_SGRawC_CD ub_SGRawC_CD quarter_SGRawC_CD, lcolor("237 68 74")) ///
+    , yline(0, lcolor(maroon)) xline(-1, lcolor(maroon)) ///
+    xlabel(-8(2)28, grid gstyle(dot) labsize(medsmall)) /// 
+    ylabel(-0.3(0.05)0.3, grid gstyle(dot) labsize(medsmall)) ///
+    xtitle("Quarters since manager change", size(medlarge)) ///
+    legend(label(2 "Baseline TWFE estimates") label(4 "Sun and Abraham (2021) estimates") order(2 4) position(6) ring(0) size(small))
+graph save "${EventStudyResults}/CA30_Outcome2_SGRawC_Coef1_Gains_Type5_CohortDynamics.gph", replace
+
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+*-? s-3-3. erase auxiliary datasets
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+
+if ${if_erase_temp_file}==1 {
+    erase "${EventStudyResults}/CA30_Outcome2_SGRawC_Type1_Baseline_ForMerge.dta"
+    erase "${EventStudyResults}/CA30_Outcome2_SGRawC_Type5_CohortDynamics1_LtoHvsLtoL_ForMerge.dta"
+}

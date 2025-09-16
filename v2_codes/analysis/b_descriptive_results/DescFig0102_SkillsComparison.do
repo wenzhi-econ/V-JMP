@@ -6,8 +6,8 @@ Input:
     "${TempData}/0102_03HFMeasure.dta"           <== created in 0102_03 do file
     "${TempData}/DescFig0101_SkillsAfterLDA.dta" <== created in DescFig0101 py file 
 
-Results:
-    "${Results}/004ResultsBasedOnCA30/CA30_SkillsAfterLDA_HvsL_SUR.pdf"
+Output:
+    "${DescriptiveResults}/CA30_SkillsAfterLDA_HvsL_SUR.pdf"
 
 RA: WWZ 
 Time: 2025-07-08

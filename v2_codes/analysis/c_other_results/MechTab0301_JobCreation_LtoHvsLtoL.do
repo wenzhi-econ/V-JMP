@@ -1,6 +1,12 @@
 /* 
 This do file conducts the analysis on job creation and destruction.
 
+Input:
+    "${TempData}/FinalFullSample.dta"     <== created in 0101_01 do file 
+    "${TempData}/FinalAnalysisSample.dta" <== created in 0103_03 do file 
+
+Output: 
+    "${OtherResults}/CA30_NewJobA.tex"
 
 RA: WWZ 
 Time: 2025-04-29

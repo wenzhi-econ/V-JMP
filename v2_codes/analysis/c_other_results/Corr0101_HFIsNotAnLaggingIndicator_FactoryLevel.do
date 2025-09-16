@@ -150,6 +150,7 @@ reghdfe lc_l2 share_hf_managers TotWorkersBC TotWorkersWC i.TotBigC, absorb(Year
 esttab lp_control lp_l1_control lp_l2_control lc_control lc_l1_control lc_l2_control ///
     using "${OtherResults}/CA30_FactoryLevelProdAgainstLaggedHFShares.tex" ///
     , replace style(tex) fragment nocons label nofloat nobaselevels nomtitles ///
+    b(3) se(2) star(* 0.10 ** 0.05 *** 0.01) ///
     collabels(, none) keep(share_hf_managers) ///
     stats(mean r2 N, labels("Mean" "R-squared" "N") fmt(%9.3f %9.3f %9.0f)) /// 
     prehead("\begin{tabular}{lcccccc}" "\toprule" "\toprule" "& \multicolumn{3}{c}{Output per worker in logs} & \multicolumn{3}{c}{Costs per output in logs} \\" "\cmidrule(lr){2-4} \cmidrule(lr){5-7}" "& \multicolumn{1}{c}{\shortstack{Current \\ Year}} & \multicolumn{1}{c}{\shortstack{Lagged \\ -1 Year}} & \multicolumn{1}{c}{\shortstack{Lagged \\ -2 Year}} & \multicolumn{1}{c}{\shortstack{Current \\ Year}} & \multicolumn{1}{c}{\shortstack{Lagged \\ -1 Year}} & \multicolumn{1}{c}{\shortstack{Lagged \\ -2 Year}} \\ ") ///

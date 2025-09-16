@@ -20,7 +20,7 @@ capture drop Year
 generate Year = year(dofm(YearMonth))
 
 summarize PayBonus if WL==2 & CA30==0 & Year==2019, detail
-    global Mean_LFM_Wage = r(mean) // 81617.54
+    global Mean_LFM_Wage = r(mean) // 81620.01
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 2. get WL2 managers' average team size  
@@ -39,7 +39,8 @@ capture drop Year
 generate Year = year(dofm(YearMonth))
 
 summarize TeamSize if WLM==2 & tag_mngr==1 & Year==2019, detail
-    global Median_TeamSize = r(p50) // 3
+    global Median_TeamSize = ceil(r(mean)) // 5
+    display ${Median_TeamSize}
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 3. increase in productivity   
@@ -51,7 +52,7 @@ merge 1:1 IDlse YearMonth using "${TempData}/0105SalesProdOutcomes.dta", keepusi
     drop _merge
 keep if ((ProductivityStd!=.))
 
-global Increase_Prod = 0.358 
+global Increase_Prod = 0.347 
     //&? 12 quarter estimate on the sales bonus outcome
 
 tabulate ISOCode, sort
@@ -81,7 +82,7 @@ summarize Productivity if ISOCode=="PHL" & CA30_LtoL==1
     global ProdIncrease_PHL = ${Increase_Prod} * ${SD_PHL} / ${Mean_PHL}
 
 global ProdIncrease = (${ProdIncrease_IND}+${ProdIncrease_IDN}+${ProdIncrease_ITA}+${ProdIncrease_RUS}+${ProdIncrease_MEX}+${ProdIncrease_PHL})/6
-display ${ProdIncrease} // .16066719
+display ${ProdIncrease} // .15577767
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 4. other pieces of information   
@@ -107,10 +108,10 @@ global benefit = ${Median_TeamSize} * ((${Operating_Profits} * ${ProdIncrease})/
 global cost    = ${Mean_LFM_Wage} * ${Increase_Wage} * ${exchange_rate}
 
 display "Benefit increase per manager: " ${benefit} 
-    // Benefit increase per manager: 32818.353
+    // Benefit increase per manager: 53032.675
 
 display "Extra Costs per high flyer manager: " ${cost}
-    // Extra Costs per high flyer manager: 10963.521
+    // Extra Costs per high flyer manager: 10963.853
 
 display "Ratio cost/benefit: " ${cost}/${benefit}
-    // Ratio cost/benefit: .33406677
+    // Ratio cost/benefit: .2067377

@@ -14,6 +14,7 @@ Input:
 Output:
     "${EventStudyResults}/CA30_Outcome2_SGRawC_Type6_Poisson.txt"
     "${EventStudyResults}/CA30_Outcome2_SGRawC_Type6_Poisson.dta"
+    "${EventStudyResults}/CA30_Outcome2_SGRawC_Coef1_Gains_Type6_Poisson.gph"
 
 RA: WWZ 
 Time: 2025-08-05

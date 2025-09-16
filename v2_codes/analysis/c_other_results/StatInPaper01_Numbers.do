@@ -14,14 +14,14 @@ codebook IDlseMHR
 sort IDlseMHR YearMonth
 bysort IDlseMHR: egen ind_CA30 = max(CA30)
 bysort IDlseMHR: generate occurrence = _n 
-count if ind_CA30==1 & occurrence==1 // 8,694
+count if ind_CA30==1 & occurrence==1 // 8,692
 summarize ind_CA30 if occurrence==1
 /* 
     Variable |        Obs        Mean    Std. dev.       Min        Max
 -------------+---------------------------------------------------------
-    ind_CA30 |     33,198    .2618832     .439666          0          1
+    ind_CA30 |     33,198     .261823    .4396334          0          1
 */
-    //&? Among 33,198 managers of interest (those who have ever been WL2 in the data), 8,694 are high-flyer managers, i.e., about 26.2\% are high-flyers.
+    //&? Among 33,198 managers of interest (those who have ever been WL2 in the data), 8,692 are high-flyer managers, i.e., about 26.2\% are high-flyers.
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? 2. description of the full sample 
@@ -92,7 +92,7 @@ summarize Size_SubFunc if tag_SubFunc_YM==1, detail
     //&? The median size of a sub-function is {240} workers, the 10th percentile is {16} workers and the 90th percentile is {2103} workers.
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-*-? s-5-3. number of distinct job titles
+*-? s-2-3. number of distinct job titles
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 use "${TempData}/FinalFullSample.dta", clear
@@ -124,54 +124,100 @@ summarize Size_StandardJob if tag_Mngr_YM==1, detail
 */
     //&? On average, there are \checked{two} distinct job titles in a team supervised by the same manager.
 
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+*-? s-2-4. numbers related to pay and bonus
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+
+use "${TempData}/FinalFullSample.dta", clear
+keep if WL==1
+summarize Pay, detail 
+    global mean_Pay = r(mean)
+summarize Bonus, detail
+    global mean_Bonus = r(mean)
+display ${mean_Bonus} / ${mean_Pay} // .09525724
+    //&? The bonus is around {10%} of fixed pay for work-level 1 workers.
+
+use "${TempData}/FinalFullSample.dta", clear 
+bysort Office StandardJob YearMonth: egen PayBonusSD = sd(PayBonus)
+egen OfficeJobYM_tag = tag(Office StandardJob YearMonth)
+winsor2 PayBonusSD, suffix(T) cuts(5 95) trim
+summarize PayBonusSDT, detail
+/* 
+                         PayBonusSD
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     238.2554       160.0375
+ 5%     660.0438       160.0375
+10%     1518.931       160.0879       Obs           3,970,505
+25%     3254.161       160.0879       Sum of wgt.   3,970,505
+
+50%     5968.248                      Mean            7435.98
+                        Largest       Std. dev.      5597.724
+75%     10204.44       25570.41
+90%     15924.35       25570.41       Variance       3.13e+07
+95%     19121.04       25570.41       Skewness       1.047949
+99%     23854.23       25570.41       Kurtosis       3.514185
+*/
+    //&? the median standard variation in pay is around {\euro $6,000$}
+
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? 3. numbers related to event studies
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 
 use "${TempData}/FinalAnalysisSample.dta", clear 
-    //&? total employee-month level obs: 1,884,145
+    //&? total employee-month level obs: 1,882,806
 
-codebook IDlse // Unique values: 29,470
-codebook IDlseMHR if inrange(Rel_Time, -1, 0) // Unique values: 14,637 
-    //&? The event-study data comprises {29,470} transition events, involving {29,470} unique workers and {14,637} unique managers.
+codebook IDlse // Unique values: 29,423
+codebook IDlseMHR if inrange(Rel_Time, -1, 0) // Unique values: 14,616
+    //&? The event-study data comprises {29,423} transition events, involving {29,423} unique workers and {14,616} unique managers.
 
 generate Event_Year = year(dofm(Event_Time))
 tabulate Event_Year if Rel_Time==0
 /* 
  Event_Year |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-       2011 |      3,685       12.50       12.50
-       2012 |      6,774       22.99       35.49
-       2013 |      4,289       14.55       50.04
-       2014 |      2,701        9.17       59.21
-       2015 |      2,238        7.59       66.80
-       2016 |      1,966        6.67       73.47
-       2017 |      1,596        5.42       78.89
-       2018 |      1,821        6.18       85.07
-       2019 |      1,503        5.10       90.17
-       2020 |      1,085        3.68       93.85
-       2021 |      1,812        6.15      100.00
+       2011 |      3,685       12.52       12.52
+       2012 |      6,774       23.02       35.55
+       2013 |      4,287       14.57       50.12
+       2014 |      2,701        9.18       59.30
+       2015 |      2,238        7.61       66.90
+       2016 |      1,966        6.68       73.59
+       2017 |      1,598        5.43       79.02
+       2018 |      1,821        6.19       85.21
+       2019 |      1,532        5.21       90.41
+       2020 |      1,081        3.67       94.09
+       2021 |      1,740        5.91      100.00
 ------------+-----------------------------------
-      Total |     29,470      100.00
+      Total |     29,423      100.00
 */
     //&? Events occur every year but the majority of them take place in the first three years of the panel (2011-2013) since I only consider the first manager transition.
 
 count if Rel_Time==0 
-    //&? number of workers: 29,470
+    //&? number of workers: 29,423
 count if Rel_Time==0 & CA30_LtoL==1
-    //&? number of LtoL events: 18,242
+    //&? number of LtoL events: 18,217
 count if Rel_Time==0 & CA30_LtoH==1
-    //&? number of LtoH events: 4,757
+    //&? number of LtoH events: 4,754
 count if Rel_Time==0 & CA30_HtoH==1
-    //&? number of HtoH events: 3,339
+    //&? number of HtoH events: 3,331
 count if Rel_Time==0 & CA30_HtoL==1
-    //&? number of HtoL events: 3,132
+    //&? number of HtoL events: 3,121
 
-display 3339 / 29470
-    //&? .11330166 of events are HtoH
+display 3331 / 29423
+    //&? .11321075 of events are HtoH
 
 sort IDlse YearMonth
 bysort IDlse: egen TenureMin = min(Tenure)
 codebook IDlse if TenureMin<2 
-    //&? 18,830 event workers in the new hires robustness
-display 18830 / 29470
+    //&? 18,796 event workers in the new hires robustness
+display 18796 / 29470
+    //&? I show that my results are robust to only considering new hires, identified as those workers whose minimum tenure in the data is strictly less than 2 years. I retain {$64\%$} of events.
+
+*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
+*?? 4. how many employees are in different occupation groups
+*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
+
+use "${TempData}/MainFig0201_OccTransferMap.dta", clear 
+tabulate OccTask0
+
+     //&? In the event month, among all 21,069 employees in the LtoL and LtoH group, there are 6,566 (31\%) in a cognitive occupation, 5,528 (26\%) in a routine occupation, and 8,975 (43\%) in a social occupation.

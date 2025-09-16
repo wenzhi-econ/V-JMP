@@ -14,6 +14,9 @@ Input:
 Output:
     "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Type1_Baseline.txt"
     "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Type1_Baseline.dta"
+    "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Coef1_Gains_Type1_Baseline.gph"
+    "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Coef2_Loss_Type1_Baseline.gph"
+    "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Coef3_GainsMinusLoss_Type1_Baseline.gph"
 
 RA: WWZ 
 Time: 2025-07-16

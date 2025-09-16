@@ -24,6 +24,7 @@ Input:
 Output:
     "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Type5_CohortDynamics2_HtoLvsHtoH.txt"
     "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Type5_CohortDynamics2_HtoLvsHtoH.dta"
+    "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Coef2_Loss_Type5_CohortDynamics.gph"
 
 RA: WWZ 
 Time: 2025-07-16
@@ -157,24 +158,65 @@ foreach var in SJVertSGC {
     *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
     *!! quarterly estimates
-    HL_minus_HH_CohortDynamics, event_prefix(CA30) pre_window_len(24) post_window_len(60) outcome(`var')
-    twoway ///
-        (scatter coeff_`var'_loss quarter_`var'_loss, lcolor(ebblue) mcolor(ebblue)) ///
-        (rcap lb_`var'_loss ub_`var'_loss quarter_`var'_loss, lcolor(ebblue)) ///
-        , legend(off) ///
-        xline(-1, lcolor(maroon)) yline(0, lcolor(maroon)) ///
-        xlabel(-8(2)20, grid gstyle(dot) labsize(medsmall)) /// 
-        xtitle("Quarters since manager change", size(medlarge)) ///
-        ylabel(-0.3(0.05)0.3, grid gstyle(dot) labsize(medsmall))
-        
-    graph save "${EventStudyResults}/CA30_Outcome1_`var'_Coef2_Loss_Type5_CohortDynamics.gph", replace   
+    HL_minus_HH_CohortDynamics, event_prefix(CA30) pre_window_len(24) post_window_len(60) outcome(`var')   
     
 }
 
 keep coeff_* quarter_* lb_* ub_* 
-
 keep if inrange(_n, 1, 41)
-
 save "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Type5_CohortDynamics2_HtoLvsHtoH.dta", replace 
 
 log close
+
+*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
+*?? step 3. visualize the results 
+*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
+
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+*-? s-3-1. prepare the datasets
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+
+use "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Type1_Baseline.dta", clear 
+keep quarter_SJVertSGC_loss coeff_SJVertSGC_loss lb_SJVertSGC_loss ub_SJVertSGC_loss
+generate quarter = quarter_SJVertSGC_loss
+drop if quarter==.
+rename (quarter_SJVertSGC_loss coeff_SJVertSGC_loss lb_SJVertSGC_loss ub_SJVertSGC_loss) (quarter_SJVertSGC_CA30 coeff_SJVertSGC_CA30 lb_SJVertSGC_CA30 ub_SJVertSGC_CA30)
+save "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Type1_Baseline_ForMerge.dta", replace 
+
+use "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Type5_CohortDynamics2_HtoLvsHtoH.dta", clear 
+keep quarter_SJVertSGC_loss coeff_SJVertSGC_loss lb_SJVertSGC_loss ub_SJVertSGC_loss
+generate quarter = quarter_SJVertSGC_loss
+drop if quarter==.
+rename (quarter_SJVertSGC_loss coeff_SJVertSGC_loss lb_SJVertSGC_loss ub_SJVertSGC_loss) (quarter_SJVertSGC_CD coeff_SJVertSGC_CD lb_SJVertSGC_CD ub_SJVertSGC_CD)
+save "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Type5_CohortDynamics2_HtoLvsHtoH_ForMerge.dta", replace 
+
+use "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Type1_Baseline_ForMerge.dta", clear 
+merge 1:1 quarter using "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Type5_CohortDynamics2_HtoLvsHtoH_ForMerge.dta", nogenerate 
+
+replace quarter_SJVertSGC_CA30 = quarter_SJVertSGC_CA30 - 0.2
+replace quarter_SJVertSGC_CD   = quarter_SJVertSGC_CD + 0.2
+
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+*-? s-3-2. contrast TWFE against the cohort-dynamics specification
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+
+twoway ///
+    (scatter coeff_SJVertSGC_CA30 quarter_SJVertSGC_CA30, lcolor(ebblue) mcolor(ebblue)) ///
+    (rcap lb_SJVertSGC_CA30 ub_SJVertSGC_CA30 quarter_SJVertSGC_CA30, lcolor(ebblue)) ///
+    (scatter coeff_SJVertSGC_CD quarter_SJVertSGC_CD, lcolor("237 68 74") mcolor("237 68 74")) ///
+    (rcap lb_SJVertSGC_CD ub_SJVertSGC_CD quarter_SJVertSGC_CD, lcolor("237 68 74")) ///
+    , yline(0, lcolor(maroon)) xline(-1, lcolor(maroon)) ///
+    xlabel(-8(2)20, grid gstyle(dot) labsize(medsmall)) /// 
+    ylabel(-0.3(0.05)0.3, grid gstyle(dot) labsize(medsmall)) ///
+    xtitle("Quarters since manager change", size(medlarge)) ///
+    legend(label(2 "Baseline TWFE estimates") label(4 "Sun and Abraham (2021) estimates") order(2 4) position(6) ring(0) size(small))
+graph save "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Coef2_Loss_Type5_CohortDynamics.gph", replace
+
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+*-? s-3-3. erase auxiliary datasets
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+
+if ${if_erase_temp_file}==1 {
+    erase "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Type1_Baseline_ForMerge.dta"
+    erase "${EventStudyResults}/CA30_Outcome1_SJVertSGC_Type5_CohortDynamics2_HtoLvsHtoH_ForMerge.dta"
+}

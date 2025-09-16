@@ -214,6 +214,3 @@ foreach var in CVPay {
         legend(off)
     graph save "${EventStudyResults}/CA30_Outcome${number}_`var'_Coef1_Gains_Typez_YearlyAggregation.gph", replace
 }
-
-graph use "${EventStudyResults}/CA30_Outcome8_CVPay_Coef1_Gains_Typez_YearlyAggregation.gph"
-graph export "${EventStudyResults}/CA30_Outcome8_CVPay_Coef1_Gains_Typez_YearlyAggregation.pdf", replace as(pdf)

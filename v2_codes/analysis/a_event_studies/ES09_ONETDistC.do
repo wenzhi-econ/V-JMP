@@ -2,21 +2,19 @@
 This do file runs event study regressions on outcome: ONETDistC (the cumulative measure of task distance).
 The high-flyer measure used here is CA30.
 
-Special notes:
-    (1) The outcome variable is only defined after the event, so there cannot be any pre-event values.
-
 Notes on the event study regression:
-    (1) Workers in the regression sample include all four event groups, while the never-treated employees are not. 
-    (2) Never-treated employees are those who have ever been WL1 in the dataset and are not in any of the four event groups.
-    (3) The omitted group in the regression is month 0 for all four treatment groups.
-    (4) For LtoL and LtoH groups, the relative time period is [0, +84], while for HtoH and HtoL groups, the relative time period is [0, +60]. There are also binned relative time indicators at right ends.
+    (1) Workers in the regression sample include all four event groups.
+    (2) Never-treated employees are not included in the regressions.
+    (3) The omitted group in the regression is month -3, -2, and -1 for all four event groups.
+    (4) For LtoL and LtoH groups, the relative time period is [-24, +84], while for HtoH and HtoL groups, the relative time period is [-24, +60].
 
 Input: 
-    "${TempData}/FinalAnalysisSample.dta"   <== created in 0103_04 do file
+    "${TempData}/FinalAnalysisSample.dta"   <== created in 0103_03 do file
 
 Output:
     "${EventStudyResults}/CA30_Outcome9_ONETDistC.txt"
     "${EventStudyResults}/CA30_Outcome9_ONETDistC.dta"
+    "${EventStudyResults}/CA30_Outcome9_ONETDistC_Coef1_Gains.gph"
 
 RA: WWZ 
 Time: 2025-07-16

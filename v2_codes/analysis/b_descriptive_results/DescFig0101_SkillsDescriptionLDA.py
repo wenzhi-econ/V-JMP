@@ -4,8 +4,13 @@
 This python script file conducts 3-topic LDA to a set of skills text data.
 
 Input:
-    SkillsInput.dta <== raw data
+    SkillsInput.dta <== raw data in folder /project/data/a_raw_data/
 
+Output:
+    /project/data/b_temp_data/DescFig0101_SkillsAfterLDA.dta
+    /project/v2_output/b_descriptive_results/LDA3_1000Words_Topic 1.png
+    /project/v2_output/b_descriptive_results/LDA3_1000Words_Topic 2.png
+    /project/v2_output/b_descriptive_results/LDA3_1000Words_Topic 3.png
 
 RA: WWZ
 Time: 2025-03-19

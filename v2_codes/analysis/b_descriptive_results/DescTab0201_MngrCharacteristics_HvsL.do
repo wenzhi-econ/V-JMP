@@ -8,14 +8,12 @@ Input:
     "${TempData}/FinalFullSample.dta"              <== created in 0101_01 do file 
     "${TempData}/0102_03EverWL2WorkerPanel.dta"    <== created in 0102_03 do file
     "${TempData}/0102_03HFMeasure.dta"             <== created in 0102_03 do file
-    "${RawMNEData}/Univoice.dta"                   <== raw data 
+    "${RawMNEData}/UniVoice.dta"                   <== raw data 
     "${RawMNEData}/EducationMax.dta"               <== raw data 
 
 Output:
     "${TempData}/DescTab0201_EffectiveLeaderScores.dta"      <== dataset containing managers' scores on effective leader survey 
     "${TempData}/DescTab0201_SummaryStatistics_MngrHvsL.dta" <== a simplified dataset containing only relevant variables for the result
-
-Results:
     "${DescriptiveResults}/CA30_SummaryStatistics_MngrHvsL.tex"
 
 RA: WWZ 
@@ -35,7 +33,7 @@ Notes:
 
 use "${TempData}/FinalFullSample.dta", clear 
 
-merge 1:1 IDlse YearMonth using "${RawMNEData}/Univoice.dta", keepusing(LineManager)
+merge 1:1 IDlse YearMonth using "${RawMNEData}/UniVoice.dta", keepusing(LineManager)
     keep if _merge==3
     drop _merge 
 /* 

@@ -2,7 +2,8 @@
 This do file plots the distribution of pay, the correlation between sales bonus and probability of salary grade increase, and the correlation between pay and salary grade increases.
 
 Input:
-    "${TempData}/FinalFullSample.dta" <== created in 0101_01 do file 
+    "${TempData}/FinalFullSample.dta"        <== created in 0101_01 do file 
+    "${TempData}/0105SalesProdOutcomes.dta"  <== created in 0105 do file
 
 Results:
     "${DescriptiveResults}/DistributionOfStdOfPayBonus.pdf"

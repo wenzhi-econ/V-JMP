@@ -8,7 +8,7 @@ Notes:
 
 Input:
     "${TempData}/04MainOutcomesInEventStudies.dta" <== created in 0104 do file 
-    "${RawMNEData}/Univoice.dta"                   <== raw data 
+    "${RawMNEData}/UniVoice.dta"                   <== raw data 
 
 Results:
     "${OtherResults}/CA30_SelfReportedSurveyOutcomes_PCAAndMean.tex"
@@ -44,7 +44,7 @@ global SurveyVars ///
     StrategyWin USLP GoodTechnologies Competition EffectiveBarriers Integrity RecommendProducts
 
 *!! merge the survey outcomes
-merge m:1 IDlse Year using "${RawMNEData}/Univoice.dta", keepusing(${SurveyVars})
+merge m:1 IDlse Year using "${RawMNEData}/UniVoice.dta", keepusing(${SurveyVars})
 //impt: merge based on IDlse and Year, even though the survey data is only in September.
     rename _merge _mergeSurvey
     keep if _mergeSurvey==3

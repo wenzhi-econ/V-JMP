@@ -14,6 +14,9 @@ Input:
 Output:
     "${EventStudyResults}/CA30_Outcome4_PayOutcomes.txt"
     "${EventStudyResults}/CA30_Outcome4_PayOutcomes.dta"
+    "${EventStudyResults}/CA30_Outcome4_1_LogPayBonus_Coef1_Gains.gph"
+    "${EventStudyResults}/CA30_Outcome4_2_LogPay_Coef1_Gains.gph"
+    "${EventStudyResults}/CA30_Outcome4_3_LogBonus_Coef1_Gains.gph"
 
 RA: WWZ 
 Time: 2025-08-05

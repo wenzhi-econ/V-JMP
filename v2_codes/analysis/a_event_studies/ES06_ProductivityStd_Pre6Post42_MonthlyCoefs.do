@@ -7,6 +7,14 @@ Notes:
     (2) The omitted group in the regressions are month -3, -2, and -1 for all four treatment groups.
     (3) In the regression specification, for LtoL and LtoH groups, the relative time window is [-6, +84], while for HtoH and HtoL groups, the relative time window is [-6, +60]. In the visualization, only monthly coefficients [-6, +42] for the LtoH-LtoL are plotted.
 
+Input:
+    "${TempData}/FinalAnalysisSample.dta"   <== created in 0103_03 do file
+    "${TempData}/0105SalesProdOutcomes.dta" <== created in 0105 do file
+
+Output:
+    "${EventStudyResults}/CA30_Outcome6_ProductivityStd.dta"
+    "${EventStudyResults}/CA30_Outcome${number}_`var'_Coef1_Gains_90And95Confidence.pdf"
+
 RA: WWZ & AT
 Time: 2025-08-25
 */
@@ -150,11 +158,12 @@ foreach var in ProductivityStd {
     LH_minus_LL_Month, event_prefix(CA30) pre_window_len(6) post_window_len(42) outcome(`var')
         rename (month_ProductivityStd_gains coeff_ProductivityStd_gains lb_ProductivityStd_gains ub_ProductivityStd_gains) (month_95Conf coeff_95Conf lb_95Conf ub_95Conf)
 
-    twoway ///
-        (scatter coeff_90Conf month_90Conf, lcolor(ebblue) mcolor(ebblue)) ///
-        (rcap lb_90Conf ub_90Conf month_90Conf, lcolor(ebblue)) ///
-        (rcap lb_95Conf ub_95Conf month_95Conf, lcolor(ebblue)) ///
-        , legend(off) ///
+    graph twoway ///
+        (rbar ub_95Conf ub_90Conf month_95Conf, color(ebblue%30) barwidth(0.2)) ///
+        (rbar ub_90Conf lb_90Conf month_95Conf, color(ebblue%100) barwidth(0.2)) ///
+        (rbar lb_90Conf lb_95Conf month_95Conf, color(ebblue%30) barwidth(0.2)) ///
+        (scatter coeff_95Conf month_95Conf, msymbol(circle) mcolor(ebblue) msize(0.8)) ///
+        , legend(label(1 "95%") label(2 "90%") order(1 2) position(6) ring(0) rows(1) symysize(0.5) textwidth(8)) ///
         xline(-1, lcolor(maroon)) yline(0, lcolor(maroon)) ///
         xlabel(-6(2)42, grid gstyle(dot) labsize(medsmall)) /// 
         xtitle("Months since manager change", size(medlarge)) ///
