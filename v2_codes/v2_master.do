@@ -24,7 +24,10 @@ set varabbrev off
 
 if  "`c(username)'" == "virginiaminni" global user "/Users/virginiaminni/Dropbox/JMP_Managers"
 if  "`c(username)'" == "virginia_m"    global user "C:/Users/virginia_m/Dropbox/JMP_Managers"
-if  "`c(username)'" == "wang"          global user "E:/__RA/JMP_Managers"
+if  "`c(username)'" == "wang"         {
+    global user "E:/__RA/JMP_Managers"
+    global python_loc = "./python_env/python.exe"
+} 
 
 cd "${user}"
 
@@ -74,14 +77,14 @@ while `"`1'"' != "" {
 adopath ++ "${user}/stata_libraries"
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
-*-? use python stored in the local python_env environment
+*-? using python stored in the local python_env environment
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 /* 
 Notes: 
     (1) The python script files will be executed by the shell command in Stata. 
-        Therefore, it is necessary to specify the location of a properly specified python virtual environment.
-    (1) Make sure the virtual environment is installed in the ${user}/python_env folder.
-    (2) Make sure the virtual environment follows the specifications in the "environment.yml" file.
+        (i) Therefore, it is necessary to specify the location of a properly specified python virtual environment.
+        (ii) Make sure the virtual environment is installed in the ${user}/python_env folder.
+        (iii) Make sure the virtual environment follows the specifications in the "environment.yml" file.
     (2) This can be easily achieved by running the following commands in e.g., windows powershell.
             cd /path/to/project
             conda env create --prefix ./python_env --file environment.yml
@@ -90,9 +93,12 @@ Notes:
             conda activate ./python_env
             conda list pandas
             pip show pyfixest
+    (4) The specific location of the python is stored in the global macro ${python_loc}.
+        (i) In a Windows laptop, it could be 
+            global python_loc = "./python_env/python.exe".
+        (ii) In a Linux system, it could be 
+            global python_loc = "/path/to/project/python_env/python".
 */
-
-global python_loc = "./python_env/python.exe"
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
 *?? step 4. set figure scheme 
@@ -112,12 +118,13 @@ grstyle set size medlarge: axis_title
 global if_erase_temp_file = 1
     //&? if it is set to 1, temporary auxiliary dta files produced in the data cleaning process will be erased
 
+
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-5-1. dataset construction
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 
 capture log close 
-log using "${TempData}/log_DataCleaning.txt", replace text
+log using "${TempData}/20250825Log_DataCleaning.txt", replace text
 
 do "${Codes}/clean/0101_01GenerateWorkersOutcomes.do"
 do "${Codes}/clean/0101_02ONETRawScoreConstruction.do"
@@ -134,6 +141,7 @@ do "${Codes}/clean/0105SalesProductivityDatasets.do"
 do "${Codes}/clean/0106TeamLevelDataset.do"
 
 log close
+
 
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-5-2. less computationally intensive programs
@@ -203,7 +211,8 @@ do "${Analysis}/c_other_results/SurveyOutcomes0101_ResponseDiff.do"
 
 *!! Supplementary Materials Table S.3 and S.4
 do "${Analysis}/c_other_results/SurveyOutcomes0102_CorrWithHFStatus.do"
-/* 
+
+
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-5-3. self-written programs (for event studies)
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
@@ -218,8 +227,9 @@ do "${Utilities}/07CoefPrograms_CohortDynamics.do"
 do "${Utilities}/08MacroPrograms_EventDummies.do"
 do "${Utilities}/09CoefPrograms_LHAndLL.do"
 do "${Utilities}/10CoefPrograms_MonthlyCoef.do"
-do "${Utilities}/11CoefPrograms_MonthlyCoef_90Confidence.do" */
-/* 
+do "${Utilities}/11CoefPrograms_MonthlyCoef_90Confidence.do"
+
+
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-5-4. computationally intensive programs
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
@@ -272,6 +282,7 @@ do "${Analysis}/a_event_studies/ES08_TeamLevel_CVPay_YearlyCoefs.do"
 do "${Analysis}/a_event_studies/ES01_SJVertSGC_Typez_Placebo.do"
 do "${Analysis}/a_event_studies/ES02_SGRawC_Typez_Placebo.do"
 
+
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
 *-? s-5-5. statistics cited in the paper
 *-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
@@ -281,4 +292,27 @@ do "${Analysis}/c_other_results/StatInPaper02_Magnitudes.do"
 do "${Analysis}/c_other_results/StatInPaper03_PayEffectsMagnitudes.do"
 shell "${python_loc}" "${Analysis}/b_descriptive_results/StatInPaper03_PayEffectsMagnitude_TenureEquivalent.py"
 do "${Analysis}/c_other_results/StatInPaper04_Mediation.do"
-do "${Analysis}/c_other_results/StatInPaper05_CostBenefitAnalysis.do" */
+do "${Analysis}/c_other_results/StatInPaper05_CostBenefitAnalysis.do"
+
+
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+*-? s-5-6. transform all gph files to pdf files
+*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?*-?
+
+local folder_path "${EventStudyResults}"
+local gph_files : dir "`folder_path'" files "*.gph", respectcase
+
+foreach file in `gph_files' {
+    display "----------------------------------------------------------------------------"
+	display "----------------------------------------------------------------------------"
+    display "Processing file: `file'"
+
+    local base_name = substr("`file'", 1, strrpos("`file'", ".") - 1)
+
+    graph use "`folder_path'/`file'"
+    graph export "`folder_path'/`base_name'.pdf", as(pdf) replace
+
+    display "Done with file: `file'"
+    display "----------------------------------------------------------------------------"
+    display "----------------------------------------------------------------------------"
+}
