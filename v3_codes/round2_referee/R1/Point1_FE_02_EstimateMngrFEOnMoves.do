@@ -46,7 +46,7 @@ generate SGFE30 = (SGFE >= ${SGFE_70p})
 
 *-? s-2-4. generate variables used for further merge 
 
-keep IDlseMHR SJFE FE50 FE40 FE30
+keep IDlseMHR SGFE SGFE50 SGFE40 SGFE30
 rename IDlseMHR IDMngr
 foreach var in IDMngr SGFE50 SGFE40 SGFE30 {
     generate `var'_Pre = `var'

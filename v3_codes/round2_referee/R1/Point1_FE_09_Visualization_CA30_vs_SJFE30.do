@@ -54,7 +54,7 @@ twoway ///
     xlabel(-8(2)28, grid gstyle(dot) labsize(medsmall)) /// 
     ylabel(-0.3(0.05)0.3, grid gstyle(dot) labsize(medsmall)) ///
     xtitle("Quarters since manager change", size(medlarge)) ///
-    legend(label(2 "Original age-based high-flyer measure") label(4 "Manager FE based high-flyer measure (FE estimated against salary grade increases)") order(2 4) position(6) ring(0) size(small) rows(1))
+    legend(label(2 "Original age-based high-flyer measure") label(4 "Manager FE based high-flyer measure (FE estimated against lateral transfer increases)") order(2 4) position(6) ring(0) size(small) rows(2))
 graph export "${Round1Results}/CA30SJFE30_Outcome2_SGRawC_Coef1_Gains.pdf", replace as(pdf)
 
 *??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??*??
@@ -106,5 +106,5 @@ twoway ///
     xlabel(-8(2)28, grid gstyle(dot) labsize(medsmall)) /// 
     ylabel(-0.3(0.05)0.3, grid gstyle(dot) labsize(medsmall)) ///
     xtitle("Quarters since manager change", size(medlarge)) ///
-    legend(label(2 "Original age-based high-flyer measure") label(4 "Manager FE based high-flyer measure (FE estimated against salary grade increases)") order(2 4) position(6) ring(0) size(small) rows(1))
+    legend(label(2 "Original age-based high-flyer measure") label(4 "Manager FE based high-flyer measure (FE estimated against lateral transfer increases)") order(2 4) position(6) ring(0) size(small) rows(2))
 graph export "${Round1Results}/CA30SJFE30_Outcome1_SJVertSGC_Coef1_Gains.pdf", replace as(pdf)
