@@ -19,16 +19,7 @@ order Year YearMonth IDlse IDlseMHR WL LogPayBonus TransferSJ ChangeSalaryGrade 
 //impt: step 1. keep only WL1 employees
 keep if WL==1
 
-// step 2. get two outcomes used in manager FE estimation
-sort IDlse YearMonth
-bysort IDlse: generate ChangeSalaryGradeC = sum(ChangeSalaryGrade)
-
-generate SJVertSG = TransferSJ
-replace  SJVertSG = 0 if ChangeSalaryGrade==0
-sort IDlse YearMonth
-bysort IDlse: generate SJVertSGC = sum(SJVertSG)
-
-// setp 3. add additional outcomes. any standard job change
+// step 2. get outcomes used in manager FE estimation
 sort IDlse YearMonth
 bysort IDlse: generate StandardJobC = sum(TransferSJ)
 
